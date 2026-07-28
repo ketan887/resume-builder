@@ -1,6 +1,7 @@
 import PersonalInfo from "../../resume/PersonalInfo";
 import Education from "../../resume/Education";
 import Experience from "../../resume/Experience";
+import Skills from "../../resume/Skills";
 
 function ResumeEditor({ activeSection }) {
   return (
@@ -8,18 +9,18 @@ function ResumeEditor({ activeSection }) {
 
       {activeSection === "personal" && <PersonalInfo />}
 
-      {activeSection === "education" && (
-        <h2 className="text-2xl font-bold">
-         {activeSection === "personal" && <PersonalInfo />}
+      {activeSection === "education" && <Education />}
 
-{activeSection === "education" && <Education />}
-        </h2>
+      {activeSection === "experience" && <Experience />}
+
+      {activeSection === "skills" && <Skills />}
+
+      {activeSection === "projects" && (
+        <h2 className="text-2xl font-bold">Projects (Coming Soon)</h2>
       )}
 
-      {activeSection === "experience" && (
-        <h1 className="text-2xl font-bold">
-          {activeSection === "experience" && <Experience />}
-        </h1>
+      {activeSection === "certificates" && (
+        <h2 className="text-2xl font-bold">Certificates (Coming Soon)</h2>
       )}
 
     </div>

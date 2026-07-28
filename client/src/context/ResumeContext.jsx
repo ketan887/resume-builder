@@ -4,42 +4,65 @@ export const ResumeContext = createContext();
 
 export function ResumeProvider({ children }) {
   const [resumeData, setResumeData] = useState({
-  personalInfo: {
-    fullName: "",
-    title: "",
-    email: "",
-    phone: "",
-    location: "",
-    linkedin: "",
-    github: "",
-    portfolio: "",
-    summary: "",
-  },
+    selectedTemplate: "modern",
 
-  education: [
-    {
-      id: Date.now(),
-      degree: "",
-      institution: "",
+    personalInfo: {
+      fullName: "",
+      title: "",
+      email: "",
+      phone: "",
       location: "",
-      startYear: "",
-      endYear: "",
+      linkedin: "",
+      github: "",
+      portfolio: "",
+      summary: "",
     },
-  ],
 
-  experience: [
-  {
-    id: Date.now() + 1,
-    company: "",
-    position: "",
-    location: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-  },
-],
-});
-  
+    education: [
+      {
+        id: Date.now(),
+        degree: "",
+        institution: "",
+        location: "",
+        startYear: "",
+        endYear: "",
+      },
+    ],
+
+    experience: [
+      {
+        id: Date.now() + 1,
+        company: "",
+        position: "",
+        location: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      },
+    ],
+
+    projects: [
+      {
+        id: Date.now() + 2,
+        title: "",
+        description: "",
+        technologies: "",
+        github: "",
+        live: "",
+      },
+    ],
+
+    skills: [],
+
+    certificates: [
+      {
+        id: Date.now() + 3,
+        name: "",
+        issuer: "",
+        year: "",
+      },
+    ],
+  });
 
   return (
     <ResumeContext.Provider value={{ resumeData, setResumeData }}>
