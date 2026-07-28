@@ -62,6 +62,21 @@ export function ResumeProvider({ children }) {
         year: "",
       },
     ],
+
+    projects: [
+  {
+    id: Date.now() + 2,
+    title: "",
+    technologies: "",
+    github: "",
+    live: "",
+    description: "",
+  },
+],
+
+skills: [],
+
+    
   });
 
   return (

@@ -2,6 +2,7 @@ import PersonalInfo from "../../resume/PersonalInfo";
 import Education from "../../resume/Education";
 import Experience from "../../resume/Experience";
 import Skills from "../../resume/Skills";
+import Projects from "../../resume/Projects";
 
 function ResumeEditor({ activeSection }) {
   return (
@@ -16,7 +17,7 @@ function ResumeEditor({ activeSection }) {
       {activeSection === "skills" && <Skills />}
 
       {activeSection === "projects" && (
-        <h2 className="text-2xl font-bold">Projects (Coming Soon)</h2>
+        <h2 className="text-2xl font-bold">{activeSection === "projects" && <Projects />}</h2>
       )}
 
       {activeSection === "certificates" && (

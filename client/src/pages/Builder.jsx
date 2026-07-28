@@ -16,10 +16,10 @@ function Builder() {
 
       <ProgressBar progress={35} />
 
-      <div className="grid grid-cols-12 gap-6">
+     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* Sidebar */}
-        <div className="col-span-2">
+        <div className="col-span-12 lg:col-span-2">
           <ResumeSidebar
             activeSection={activeSection}
             setActiveSection={setActiveSection}
@@ -27,12 +27,12 @@ function Builder() {
         </div>
 
         {/* Editor */}
-        <div className="col-span-5">
+        <div className="col-span-12 lg:col-span-5">
           <ResumeEditor activeSection={activeSection} />
         </div>
 
         {/* Preview */}
-        <div className="col-span-5">
+        <div className="col-span-12 lg:col-span-5">
           <div className="sticky top-6">
             <ResumePreview />
           </div>

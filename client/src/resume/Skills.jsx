@@ -1,31 +1,30 @@
 import { useContext, useState } from "react";
 import { ResumeContext } from "../context/ResumeContext";
-import skillSuggestions from "../data/skillSuggestions";
 
 function Skills() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
   const [skill, setSkill] = useState("");
 
-  const addSkill = (value) => {
-    const newSkill = value.trim();
+  const addSkill = () => {
+    const trimmedSkill = skill.trim();
 
-    if (!newSkill) return;
+    if (!trimmedSkill) return;
 
-    const exists = resumeData.skills.some(
-      (item) => item.toLowerCase() === newSkill.toLowerCase()
-    );
-
-    if (exists) {
-      setSkill("");
-      return;
-    }
+    if (resumeData.skills.includes(trimmedSkill)) return;
 
     setResumeData({
       ...resumeData,
-      skills: [...resumeData.skills, newSkill],
+      skills: [...resumeData.skills, trimmedSkill],
     });
 
     setSkill("");
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addSkill();
+    }
   };
 
   const removeSkill = (index) => {
@@ -35,78 +34,40 @@ function Skills() {
     });
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addSkill(skill);
-    }
-
-    if (
-      e.key === "Backspace" &&
-      skill === "" &&
-      resumeData.skills.length > 0
-    ) {
-      removeSkill(resumeData.skills.length - 1);
-    }
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow p-6">
+    <div>
       <h2 className="text-2xl font-bold mb-6">Skills</h2>
 
-      <input
-        type="text"
-        placeholder="Type a skill and press Enter..."
-        value={skill}
-        onChange={(e) => setSkill(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      <div className="flex gap-3">
+        <input
+          className="flex-1 border rounded-lg p-3"
+          placeholder="React, Node.js, MongoDB..."
+          value={skill}
+          onChange={(e) => setSkill(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
 
-      {/* Selected Skills */}
+        <button
+          onClick={addSkill}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-lg"
+        >
+          Add
+        </button>
+      </div>
+
       <div className="flex flex-wrap gap-3 mt-6">
         {resumeData.skills.map((item, index) => (
           <div
             key={index}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full"
+            className="bg-blue-600 text-white px-4 py-2 rounded-full flex items-center gap-2"
           >
-            <span>{item}</span>
+            {item}
 
-            <button
-              onClick={() => removeSkill(index)}
-              className="font-bold hover:text-red-200 transition"
-            >
+            <button onClick={() => removeSkill(index)}>
               ✕
             </button>
           </div>
         ))}
-      </div>
-
-      {/* Suggested Skills */}
-      <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-3">
-          Suggested Skills
-        </h3>
-
-        <div className="flex flex-wrap gap-2">
-          {skillSuggestions
-            .filter(
-              (item) =>
-                !resumeData.skills.some(
-                  (skill) =>
-                    skill.toLowerCase() === item.toLowerCase()
-                )
-            )
-            .map((item) => (
-              <button
-                key={item}
-                onClick={() => addSkill(item)}
-                className="border border-slate-300 px-4 py-2 rounded-full hover:bg-blue-600 hover:text-white transition"
-              >
-                {item}
-              </button>
-            ))}
-        </div>
       </div>
     </div>
   );
