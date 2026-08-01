@@ -10,21 +10,26 @@ function EducationSection() {
         Education
       </h2>
 
-      <div className="mt-4 space-y-5">
-        {resumeData.education.map((edu) => (
-          <div key={edu.id}>
-            <h3 className="font-semibold text-lg">
-              {edu.degree || "Degree"}
-            </h3>
+      <div className="mt-4 space-y-6">
+  {resumeData.education.map((edu) => (
+    <div
+      key={edu.id}
+      className="border-l-4 border-blue-600 pl-4"
+    >
+      <h3 className="text-lg font-semibold text-slate-800">
+        {edu.degree || "Degree"}
+      </h3>
 
-            <p>{edu.institution}</p>
+      <p className="font-medium text-slate-700">
+        {edu.institution}
+      </p>
 
-            <p className="text-sm text-slate-500">
-              {edu.location} • {edu.startYear} - {edu.endYear}
-            </p>
-          </div>
-        ))}
-      </div>
+      <p className="text-sm text-slate-500">
+        {edu.location} • {edu.startYear} - {edu.endYear}
+      </p>
+    </div>
+  ))}
+</div>
     </section>
   );
 }

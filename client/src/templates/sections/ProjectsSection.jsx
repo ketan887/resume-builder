@@ -1,33 +1,49 @@
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
+import SectionHeading from "../../components/ui/SectionHeading";
+import { FaGithub } from "react-icons/fa";
+import { Globe } from "lucide-react";
 
 function ProjectsSection() {
   const { resumeData } = useContext(ResumeContext);
 
+  if (resumeData.projects.length === 0) return null;
+
   return (
-    <section className="mt-8">
-      <h3 className="text-xl font-bold border-b-2 border-blue-600 pb-2 mb-4">
-        Projects
-      </h3>
+    <section>
+      <SectionHeading title="Projects" />
 
       <div className="space-y-6">
+
         {resumeData.projects.map((project) => (
-          <div key={project.id}>
+          <div
+            key={project.id}
+            className="border-l-4 border-blue-600 pl-4"
+          >
+            <div className="flex justify-between flex-wrap">
 
-            <div className="flex justify-between items-center">
+              <div>
 
-              <h4 className="text-lg font-semibold">
-                {project.title || "Project Title"}
-              </h4>
+                <h3 className="text-lg font-semibold text-slate-800">
+                  {project.title || "Project Title"}
+                </h3>
 
-              <div className="flex gap-4 text-sm text-blue-600">
+                <p className="text-blue-600 text-sm mt-1">
+                  {project.technologies}
+                </p>
+
+              </div>
+
+              <div className="flex gap-4">
 
                 {project.github && (
                   <a
                     href={project.github}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm hover:text-blue-600"
                   >
+                    <FaGithub />
                     GitHub
                   </a>
                 )}
@@ -36,9 +52,11 @@ function ProjectsSection() {
                   <a
                     href={project.live}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm hover:text-blue-600"
                   >
-                    Live Demo
+                    <Globe size={16} />
+                    Live
                   </a>
                 )}
 
@@ -46,16 +64,13 @@ function ProjectsSection() {
 
             </div>
 
-            <p className="text-sm text-slate-500 mt-1">
-              {project.technologies}
-            </p>
-
-            <p className="mt-3 text-slate-700 leading-7">
+            <p className="mt-3 leading-7 text-slate-700">
               {project.description}
             </p>
 
           </div>
         ))}
+
       </div>
     </section>
   );

@@ -33,11 +33,15 @@ const sections = [
     label: "Skills",
     icon: <FaTools />,
   },
-  {
-    id: "certificates",
-    label: "Certificates",
-    icon: <FaCertificate />,
-  },
+  // {
+  //   id: "certificates",
+  //   label: "Certificates",
+  //   icon: <FaCertificate />,
+  // },
+
+  { id: "certificates", label: "🏆 Certificates" },
+{ id: "languages", label: "🌍 Languages" },
+{ id: "achievements", label: "🥇 Achievements" },
 ];
 
 function ResumeSidebar({ activeSection, setActiveSection }) {

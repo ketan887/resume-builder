@@ -1,6 +1,6 @@
 import React from 'react'
 
-const LanguagesSection = () => {
+const Achievements = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const LanguagesSection = () => {
   )
 }
 
-export default LanguagesSection
+export default Achievements

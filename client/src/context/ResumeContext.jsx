@@ -73,6 +73,36 @@ export function ResumeProvider({ children }) {
     description: "",
   },
 ],
+skills: [],
+
+
+certificates: [
+  {
+    id: Date.now() + 3,
+    name: "",
+    issuer: "",
+    issueDate: "",
+    credentialId: "",
+    credentialUrl: "",
+  },
+],
+
+languages: [
+  {
+    id: Date.now() + 4,
+    name: "",
+    proficiency: "Native",
+  },
+],
+
+achievements: [
+  {
+    id: Date.now() + 5,
+    title: "",
+    description: "",
+    year: "",
+  },
+],
 
 skills: [],
 

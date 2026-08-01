@@ -4,15 +4,6 @@ import { ResumeContext } from "../context/ResumeContext";
 function Projects() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
 
-  const updateProject = (id, field, value) => {
-    setResumeData({
-      ...resumeData,
-      projects: resumeData.projects.map((project) =>
-        project.id === id ? { ...project, [field]: value } : project
-      ),
-    });
-  };
-
   const addProject = () => {
     setResumeData({
       ...resumeData,
@@ -30,6 +21,17 @@ function Projects() {
     });
   };
 
+  const updateProject = (id, field, value) => {
+    setResumeData({
+      ...resumeData,
+      projects: resumeData.projects.map((project) =>
+        project.id === id
+          ? { ...project, [field]: value }
+          : project
+      ),
+    });
+  };
+
   const removeProject = (id) => {
     setResumeData({
       ...resumeData,
@@ -41,25 +43,31 @@ function Projects() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Projects</h2>
+      <h2 className="text-2xl font-bold mb-6">
+        Projects
+      </h2>
 
       {resumeData.projects.map((project) => (
         <div
           key={project.id}
-          className="border rounded-xl p-5 mb-5 space-y-4"
+          className="border rounded-xl p-5 mb-6 space-y-4"
         >
           <input
-            className="w-full border p-3 rounded-lg"
+            className="w-full border rounded-lg p-3"
             placeholder="Project Title"
             value={project.title}
             onChange={(e) =>
-              updateProject(project.id, "title", e.target.value)
+              updateProject(
+                project.id,
+                "title",
+                e.target.value
+              )
             }
           />
 
           <input
-            className="w-full border p-3 rounded-lg"
-            placeholder="Technologies (React, Node.js...)"
+            className="w-full border rounded-lg p-3"
+            placeholder="Technologies (React, Node, MongoDB)"
             value={project.technologies}
             onChange={(e) =>
               updateProject(
@@ -71,27 +79,35 @@ function Projects() {
           />
 
           <input
-            className="w-full border p-3 rounded-lg"
+            className="w-full border rounded-lg p-3"
             placeholder="GitHub URL"
             value={project.github}
             onChange={(e) =>
-              updateProject(project.id, "github", e.target.value)
+              updateProject(
+                project.id,
+                "github",
+                e.target.value
+              )
             }
           />
 
           <input
-            className="w-full border p-3 rounded-lg"
+            className="w-full border rounded-lg p-3"
             placeholder="Live Demo URL"
             value={project.live}
             onChange={(e) =>
-              updateProject(project.id, "live", e.target.value)
+              updateProject(
+                project.id,
+                "live",
+                e.target.value
+              )
             }
           />
 
           <textarea
-            className="w-full border p-3 rounded-lg"
+            className="w-full border rounded-lg p-3"
             rows="4"
-            placeholder="Project Description"
+            placeholder="Describe your project..."
             value={project.description}
             onChange={(e) =>
               updateProject(
@@ -104,7 +120,7 @@ function Projects() {
 
           <button
             onClick={() => removeProject(project.id)}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+            className="bg-red-600 text-white px-4 py-2 rounded-lg"
           >
             Remove Project
           </button>
@@ -113,7 +129,7 @@ function Projects() {
 
       <button
         onClick={addProject}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
       >
         + Add Project
       </button>

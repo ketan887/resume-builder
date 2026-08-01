@@ -10,10 +10,10 @@ function Summary() {
         Professional Summary
       </h2>
 
-      <p className="mt-4 text-slate-700 leading-7">
-        {resumeData.personalInfo.summary ||
-          "Your professional summary will appear here."}
-      </p>
+      <p className="text-slate-700 leading-8 text-justify">
+  {resumeData.personalInfo.summary ||
+    "Your professional summary will appear here."}
+</p>
     </section>
   );
 }

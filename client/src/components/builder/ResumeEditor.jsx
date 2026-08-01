@@ -3,6 +3,9 @@ import Education from "../../resume/Education";
 import Experience from "../../resume/Experience";
 import Skills from "../../resume/Skills";
 import Projects from "../../resume/Projects";
+import Certificates from "../../resume/Certificates";
+import Languages from "../../resume/Languages";
+import Achievements from "../../resume/Achievements";
 
 function ResumeEditor({ activeSection }) {
   return (
@@ -16,13 +19,17 @@ function ResumeEditor({ activeSection }) {
 
       {activeSection === "skills" && <Skills />}
 
-      {activeSection === "projects" && (
-        <h2 className="text-2xl font-bold">{activeSection === "projects" && <Projects />}</h2>
-      )}
+      {activeSection === "projects" && <Projects />}
 
-      {activeSection === "certificates" && (
+      {/* {activeSection === "certificates" && (
         <h2 className="text-2xl font-bold">Certificates (Coming Soon)</h2>
-      )}
+      )} */}
+
+      {activeSection === "certificates" && <Certificates />}
+
+{activeSection === "languages" && <Languages />}
+
+{activeSection === "achievements" && <Achievements />}
 
     </div>
   );

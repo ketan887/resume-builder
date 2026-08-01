@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { ResumeContext } from "../context/ResumeContext";
+import SectionHeading from "../components/ui/SectionHeading";
 
 function Education() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
@@ -41,7 +42,7 @@ function Education() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Education</h2>
+     <SectionHeading title="Education" />
 
       {resumeData.education.map((edu) => (
         <div
