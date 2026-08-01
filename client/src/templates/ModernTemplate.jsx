@@ -5,6 +5,8 @@ import ExperienceSection from "./sections/ExperienceSection";
 import SkillsSection from "./sections/SkillsSection";
 import ProjectsSection from "./sections/ProjectsSection";
 import CertificatesSection from "./sections/CertificatesSection";
+import LanguagesSection from "./sections/LanguagesSection";
+import AchievementsSection from "./sections/AchievementsSection";
 
 function ModernTemplate() {
   return (
@@ -22,6 +24,10 @@ function ModernTemplate() {
       <ProjectsSection />
 
       <CertificatesSection/>
+
+      <LanguagesSection/>
+
+      <AchievementsSection/>
 
     </div>
   );
