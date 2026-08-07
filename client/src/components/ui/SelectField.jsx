@@ -1,9 +1,9 @@
-function TextAreaField({
+function SelectField({
   label,
-  placeholder = "",
   value,
   onChange,
-  rows = 5,
+  options = [],
+  placeholder = "Select an option",
   required = false,
   disabled = false,
   error = "",
@@ -14,7 +14,10 @@ function TextAreaField({
     <div className="space-y-2">
 
       {label && (
-        <label className="flex items-center gap-1 text-sm font-semibold text-slate-700">
+        <label
+          htmlFor={name}
+          className="flex items-center gap-1 text-sm font-semibold text-slate-700"
+        >
           {label}
 
           {required && (
@@ -23,29 +26,26 @@ function TextAreaField({
         </label>
       )}
 
-      <textarea
+      <select
+        id={name}
         name={name}
-        rows={rows}
-        placeholder={placeholder}
         value={value}
-        disabled={disabled}
         onChange={onChange}
+        disabled={disabled}
         className={`
           w-full
-          resize-y
           rounded-xl
           border
+          bg-white
           px-4
           py-3
           text-sm
-          leading-6
-          bg-white
           text-slate-800
-          placeholder:text-slate-400
           shadow-sm
           outline-none
           transition-all
           duration-200
+          cursor-pointer
 
           ${
             error
@@ -59,7 +59,34 @@ function TextAreaField({
               : ""
           }
         `}
-      />
+      >
+
+        <option value="" disabled>
+          {placeholder}
+        </option>
+
+        {options.map((option) => {
+          const optionValue =
+            typeof option === "object"
+              ? option.value
+              : option;
+
+          const optionLabel =
+            typeof option === "object"
+              ? option.label
+              : option;
+
+          return (
+            <option
+              key={optionValue}
+              value={optionValue}
+            >
+              {optionLabel}
+            </option>
+          );
+        })}
+
+      </select>
 
       {helperText && !error && (
         <p className="text-xs text-slate-500">
@@ -77,4 +104,4 @@ function TextAreaField({
   );
 }
 
-export default TextAreaField;
+export default SelectField;

@@ -1,20 +1,25 @@
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
 
+import ResumeSection from "../../resume/ResumeSection";
+import ResumeHeading from "../../resume/ResumeHeading";
+
 function Summary() {
   const { resumeData } = useContext(ResumeContext);
+  const { summary } = resumeData.personalInfo;
+
+  if (!summary) return null;
 
   return (
-    <section className="mt-8">
-      <h2 className="text-xl font-bold border-b-2 border-blue-600 pb-2">
+    <ResumeSection>
+      <ResumeHeading>
         Professional Summary
-      </h2>
+      </ResumeHeading>
 
-      <p className="text-slate-700 leading-8 text-justify">
-  {resumeData.personalInfo.summary ||
-    "Your professional summary will appear here."}
-</p>
-    </section>
+      <p className="text-[15px] leading-7 text-slate-700 text-justify">
+        {summary}
+      </p>
+    </ResumeSection>
   );
 }
 

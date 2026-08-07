@@ -1,88 +1,175 @@
 import { useContext } from "react";
 import { ResumeContext } from "../context/ResumeContext";
+
+import InputField from "../components/ui/InputField";
+import TextAreaField from "../components/ui/TextAreaField";
+
 function PersonalInfo() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
 
+  const personalInfo = resumeData.personalInfo;
+
   const handleChange = (e) => {
-    setResumeData({
-      ...resumeData,
+    const { name, value } = e.target;
+
+    setResumeData((prev) => ({
+      ...prev,
       personalInfo: {
-        ...resumeData.personalInfo,
-        [e.target.name]: e.target.value,
+        ...prev.personalInfo,
+        [name]: value,
       },
-    });
+    }));
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-4">
-        Personal Information
-      </h2>
+    <div className="space-y-8">
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="Full Name"
-        name="fullName"
-        value={resumeData.personalInfo.fullName}
-        onChange={handleChange}
-      />
+      {/* Basic Information */}
+      <section>
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="Professional Title"
-        name="title"
-        value={resumeData.personalInfo.title}
-        onChange={handleChange}
-      />
+        <div className="mb-5">
+          <h3 className="text-lg font-bold text-slate-900">
+            Basic Information
+          </h3>
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="Email"
-        name="email"
-        value={resumeData.personalInfo.email}
-        onChange={handleChange}
-      />
+          <p className="mt-1 text-sm text-slate-500">
+            Add the information recruiters need to identify you.
+          </p>
+        </div>
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="Phone"
-        name="phone"
-        value={resumeData.personalInfo.phone}
-        onChange={handleChange}
-      />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="Location"
-        name="location"
-        value={resumeData.personalInfo.location}
-        onChange={handleChange}
-      />
+          <InputField
+            label="Full Name"
+            name="fullName"
+            placeholder="e.g. Ketan Lokhande"
+            value={personalInfo.fullName}
+            onChange={handleChange}
+            required
+          />
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="LinkedIn URL"
-        name="linkedin"
-        value={resumeData.personalInfo.linkedin}
-        onChange={handleChange}
-      />
+          <InputField
+            label="Professional Title"
+            name="title"
+            placeholder="e.g. MERN Stack Developer"
+            value={personalInfo.title}
+            onChange={handleChange}
+            required
+            helperText="Use the job title you're targeting."
+          />
 
-      <input
-        className="w-full border rounded-lg p-3"
-        placeholder="GitHub URL"
-        name="github"
-        value={resumeData.personalInfo.github}
-        onChange={handleChange}
-      />
+          <InputField
+            label="Email Address"
+            name="email"
+            type="email"
+            placeholder="e.g. ketan@example.com"
+            value={personalInfo.email}
+            onChange={handleChange}
+            required
+          />
 
-      <textarea
-        className="w-full border rounded-lg p-3"
-        rows="4"
-        placeholder="Professional Summary"
-        name="summary"
-        value={resumeData.personalInfo.summary}
-        onChange={handleChange}
-      />
+          <InputField
+            label="Phone Number"
+            name="phone"
+            type="tel"
+            placeholder="e.g. +91 9876543210"
+            value={personalInfo.phone}
+            onChange={handleChange}
+            required
+          />
+
+          <InputField
+            label="Location"
+            name="location"
+            placeholder="e.g. Maharashtra, India"
+            value={personalInfo.location}
+            onChange={handleChange}
+          />
+
+          <InputField
+            label="Portfolio"
+            name="portfolio"
+            placeholder="https://yourportfolio.com"
+            value={personalInfo.portfolio}
+            onChange={handleChange}
+          />
+
+        </div>
+
+      </section>
+
+      {/* Online Profiles */}
+      <section>
+
+        <div className="mb-5">
+          <h3 className="text-lg font-bold text-slate-900">
+            Professional Profiles
+          </h3>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Add links to your professional profiles.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          <InputField
+            label="LinkedIn"
+            name="linkedin"
+            type="url"
+            placeholder="https://linkedin.com/in/yourname"
+            value={personalInfo.linkedin}
+            onChange={handleChange}
+            helperText="Use your complete LinkedIn URL."
+          />
+
+          <InputField
+            label="GitHub"
+            name="github"
+            type="url"
+            placeholder="https://github.com/yourname"
+            value={personalInfo.github}
+            onChange={handleChange}
+            helperText="Add your GitHub profile URL."
+          />
+
+        </div>
+
+      </section>
+
+      {/* Professional Summary */}
+      <section>
+
+        <div className="mb-5">
+          <h3 className="text-lg font-bold text-slate-900">
+            Professional Summary
+          </h3>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Write a concise summary highlighting your skills, experience,
+            and career goals.
+          </p>
+        </div>
+
+        <TextAreaField
+          label="Summary"
+          name="summary"
+          placeholder="Example: MCA student and aspiring MERN Stack Developer with experience building responsive web applications using React, Node.js, Express and MongoDB..."
+          value={personalInfo.summary}
+          onChange={handleChange}
+          rows={6}
+          required
+          helperText="Aim for 2–4 sentences and include skills relevant to your target role."
+        />
+
+        <div className="mt-2 flex justify-end">
+          <span className="text-xs text-slate-400">
+            {personalInfo.summary?.length || 0} characters
+          </span>
+        </div>
+
+      </section>
+
     </div>
   );
 }

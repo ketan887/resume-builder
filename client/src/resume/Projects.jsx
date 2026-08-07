@@ -12,9 +12,9 @@ function Projects() {
         {
           id: Date.now(),
           title: "",
-          technologies: "",
+          techStack: "",
           github: "",
-          live: "",
+          liveDemo: "",
           description: "",
         },
       ],
@@ -50,77 +50,57 @@ function Projects() {
       {resumeData.projects.map((project) => (
         <div
           key={project.id}
-          className="border rounded-xl p-5 mb-6 space-y-4"
+          className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm space-y-4"
         >
           <input
-            className="w-full border rounded-lg p-3"
+            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="Project Title"
             value={project.title}
             onChange={(e) =>
-              updateProject(
-                project.id,
-                "title",
-                e.target.value
-              )
+              updateProject(project.id, "title", e.target.value)
             }
           />
 
           <input
-            className="w-full border rounded-lg p-3"
-            placeholder="Technologies (React, Node, MongoDB)"
-            value={project.technologies}
+            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="Tech Stack (React, Node.js, MongoDB)"
+            value={project.techStack}
             onChange={(e) =>
-              updateProject(
-                project.id,
-                "technologies",
-                e.target.value
-              )
+              updateProject(project.id, "techStack", e.target.value)
             }
           />
 
           <input
-            className="w-full border rounded-lg p-3"
-            placeholder="GitHub URL"
+            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="GitHub Repository URL"
             value={project.github}
             onChange={(e) =>
-              updateProject(
-                project.id,
-                "github",
-                e.target.value
-              )
+              updateProject(project.id, "github", e.target.value)
             }
           />
 
           <input
-            className="w-full border rounded-lg p-3"
+            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="Live Demo URL"
-            value={project.live}
+            value={project.liveDemo}
             onChange={(e) =>
-              updateProject(
-                project.id,
-                "live",
-                e.target.value
-              )
+              updateProject(project.id, "liveDemo", e.target.value)
             }
           />
 
           <textarea
-            className="w-full border rounded-lg p-3"
-            rows="4"
-            placeholder="Describe your project..."
+            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            rows={5}
+            placeholder="Describe your project, your contributions, technologies used, and achievements..."
             value={project.description}
             onChange={(e) =>
-              updateProject(
-                project.id,
-                "description",
-                e.target.value
-              )
+              updateProject(project.id, "description", e.target.value)
             }
           />
 
           <button
             onClick={() => removeProject(project.id)}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg"
+            className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
           >
             Remove Project
           </button>
@@ -129,7 +109,7 @@ function Projects() {
 
       <button
         onClick={addProject}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
       >
         + Add Project
       </button>

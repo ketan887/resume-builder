@@ -1,78 +1,77 @@
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
-import SectionHeading from "../../components/ui/SectionHeading";
-import { FaGithub } from "react-icons/fa";
-import { Globe } from "lucide-react";
+
+import ResumeSection from "../../resume/ResumeSection";
+import ResumeHeading from "../../resume/ResumeHeading";
 
 function ProjectsSection() {
   const { resumeData } = useContext(ResumeContext);
 
-  if (resumeData.projects.length === 0) return null;
+  const projects = resumeData.projects.filter(
+    (project) => project.title || project.description
+  );
+
+  if (projects.length === 0) return null;
 
   return (
-    <section>
-      <SectionHeading title="Projects" />
+    <ResumeSection>
+      <ResumeHeading>Projects</ResumeHeading>
 
-      <div className="space-y-6">
+      {projects.map((project) => (
+        <div key={project.id} className="mb-6 last:mb-0">
 
-        {resumeData.projects.map((project) => (
-          <div
-            key={project.id}
-            className="border-l-4 border-blue-600 pl-4"
-          >
-            <div className="flex justify-between flex-wrap">
+          {/* Project Title */}
+          <h3 className="text-base font-semibold text-slate-900">
+            {project.title || "Project Title"}
+          </h3>
 
-              <div>
+          {/* Tech Stack */}
+          {project.techStack && (
+            <p className="mt-1 text-[15px] text-slate-600">
+              <span className="font-semibold">Tech Stack:</span>{" "}
+              {project.techStack}
+            </p>
+          )}
 
-                <h3 className="text-lg font-semibold text-slate-800">
-                  {project.title || "Project Title"}
-                </h3>
-
-                <p className="text-blue-600 text-sm mt-1">
-                  {project.technologies}
-                </p>
-
-              </div>
-
-              <div className="flex gap-4">
-
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm hover:text-blue-600"
-                  >
-                    <FaGithub />
-                    GitHub
-                  </a>
-                )}
-
-                {project.live && (
-                  <a
-                    href={project.live}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm hover:text-blue-600"
-                  >
-                    <Globe size={16} />
-                    Live
-                  </a>
-                )}
-
-              </div>
-
-            </div>
-
-            <p className="mt-3 leading-7 text-slate-700">
+          {/* Description */}
+          {project.description && (
+            <p className="mt-3 text-[15px] leading-7 text-slate-700 whitespace-pre-line">
               {project.description}
             </p>
+          )}
 
-          </div>
-        ))}
+          {/* Links */}
+          {(project.github || project.liveDemo) && (
+            <div className="mt-3 flex flex-wrap gap-6 text-[14px]">
 
-      </div>
-    </section>
+              {project.github && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-600 hover:underline break-all"
+                >
+                  GitHub Repository
+                </a>
+              )}
+
+              {project.liveDemo && (
+                <a
+                  href={project.liveDemo}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-600 hover:underline break-all"
+                >
+                  Live Demo
+                </a>
+              )}
+
+            </div>
+          )}
+
+        </div>
+      ))}
+    </ResumeSection>
   );
 }
 

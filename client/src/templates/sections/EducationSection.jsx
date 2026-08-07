@@ -1,36 +1,36 @@
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
 
+import ResumeSection from "../../resume/ResumeSection";
+import ResumeHeading from "../../resume/ResumeHeading";
+import ResumeItem from "../../resume/ResumeItem";
+
 function EducationSection() {
   const { resumeData } = useContext(ResumeContext);
 
+  const education = resumeData.education.filter(
+    (edu) => edu.degree || edu.institution
+  );
+
+  if (education.length === 0) return null;
+
   return (
-    <section className="mt-8">
-      <h2 className="text-xl font-bold border-b-2 border-blue-600 pb-2">
-        Education
-      </h2>
+    <ResumeSection>
+      <ResumeHeading>Education</ResumeHeading>
 
-      <div className="mt-4 space-y-6">
-  {resumeData.education.map((edu) => (
-    <div
-      key={edu.id}
-      className="border-l-4 border-blue-600 pl-4"
-    >
-      <h3 className="text-lg font-semibold text-slate-800">
-        {edu.degree || "Degree"}
-      </h3>
-
-      <p className="font-medium text-slate-700">
-        {edu.institution}
-      </p>
-
-      <p className="text-sm text-slate-500">
-        {edu.location} • {edu.startYear} - {edu.endYear}
-      </p>
-    </div>
-  ))}
-</div>
-    </section>
+      {education.map((edu) => (
+        <ResumeItem
+          key={edu.id}
+          title={edu.degree || "Degree"}
+          subtitle={`${edu.institution}${
+            edu.location ? ` • ${edu.location}` : ""
+          }`}
+          rightText={`${edu.startYear || ""}${
+            edu.endYear ? ` - ${edu.endYear}` : ""
+          }`}
+        />
+      ))}
+    </ResumeSection>
   );
 }
 

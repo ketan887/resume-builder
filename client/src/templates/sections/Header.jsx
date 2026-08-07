@@ -1,89 +1,46 @@
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
-import { Mail, Phone, MapPin, Globe } from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 function Header() {
   const { resumeData } = useContext(ResumeContext);
   const { personalInfo } = resumeData;
 
+  const contactInfo = [
+    personalInfo.email,
+    personalInfo.phone,
+    personalInfo.location,
+  ].filter(Boolean);
+
+  const links = [
+    personalInfo.linkedin,
+    personalInfo.github,
+    personalInfo.portfolio,
+  ].filter(Boolean);
+
   return (
-    <header className="border-b-4 border-blue-600 pb-6">
+    <header className="pb-6 border-b border-slate-300">
 
-  <div className="text-center">
+      <h1 className="text-4xl font-bold text-slate-900 tracking-tight">
+        {personalInfo.fullName || "Your Name"}
+      </h1>
 
-    <h1 className="text-4xl font-extrabold uppercase tracking-wider text-slate-800">
-      {personalInfo.fullName || "Your Name"}
-    </h1>
+      <p className="mt-2 text-xl font-medium text-slate-700">
+        {personalInfo.title || "Professional Title"}
+      </p>
 
-    <p className="text-xl text-blue-600 mt-2 font-medium">
-      {personalInfo.title || "Professional Title"}
-    </p>
+      {contactInfo.length > 0 && (
+        <p className="mt-4 text-sm text-slate-600 leading-7">
+          {contactInfo.join(" | ")}
+        </p>
+      )}
 
-  </div>
+      {links.length > 0 && (
+        <p className="mt-2 text-sm text-slate-600 break-all">
+          {links.join(" | ")}
+        </p>
+      )}
 
-  <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-6 text-sm text-slate-600">
-
-    {personalInfo.email && (
-      <div className="flex items-center gap-2">
-        <Mail size={16} className="text-blue-600" />
-        {personalInfo.email}
-      </div>
-    )}
-
-    {personalInfo.phone && (
-      <div className="flex items-center gap-2">
-        <Phone size={16} className="text-blue-600" />
-        {personalInfo.phone}
-      </div>
-    )}
-
-    {personalInfo.location && (
-      <div className="flex items-center gap-2">
-        <MapPin size={16} className="text-blue-600" />
-        {personalInfo.location}
-      </div>
-    )}
-
-    {personalInfo.linkedin && (
-      <a
-        href={personalInfo.linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 hover:text-blue-600"
-      >
-        <FaLinkedin />
-        LinkedIn
-      </a>
-    )}
-
-    {personalInfo.github && (
-      <a
-        href={personalInfo.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 hover:text-blue-600"
-      >
-        <FaGithub />
-        GitHub
-      </a>
-    )}
-
-    {personalInfo.portfolio && (
-      <a
-        href={personalInfo.portfolio}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 hover:text-blue-600"
-      >
-        <Globe size={16} />
-        Portfolio
-      </a>
-    )}
-
-  </div>
-
-</header>   
+    </header>
   );
 }
 

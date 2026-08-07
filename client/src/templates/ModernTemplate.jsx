@@ -10,7 +10,7 @@ import AchievementsSection from "./sections/AchievementsSection";
 
 function ModernTemplate() {
   return (
-    <div className="bg-white max-w-[210mm] min-h-[297mm] mx-auto shadow-2xl rounded-lg p-8 md:p-10">
+   <div className="bg-white w-[210mm] min-h-[297mm] mx-auto rounded-lg shadow-2xl border border-slate-200 px-10 py-8">
       <Header />
 
       <Summary />
