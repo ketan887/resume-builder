@@ -1,3 +1,4 @@
+
 import Header from "./sections/Header";
 import Summary from "./sections/Summary";
 import EducationSection from "./sections/EducationSection";
@@ -10,27 +11,48 @@ import AchievementsSection from "./sections/AchievementsSection";
 
 function ModernTemplate() {
   return (
-   <div className="bg-white w-[210mm] min-h-[297mm] mx-auto rounded-lg shadow-2xl border border-slate-200 px-10 py-8">
+    <div
+      className="
+        w-full
+        min-h-[1123px]
+        bg-white
+        px-8
+        py-10
+        text-slate-900
+        font-sans
+      "
+    >
+
+      {/* Resume Header */}
       <Header />
 
+      {/* Professional Summary */}
       <Summary />
 
+      {/* Professional Experience */}
       <ExperienceSection />
 
+      {/* Education */}
       <EducationSection />
 
+      {/* Technical Skills */}
       <SkillsSection />
 
+      {/* Projects */}
       <ProjectsSection />
 
-      <CertificatesSection/>
+      {/* Certifications */}
+      <CertificatesSection />
 
-      <LanguagesSection/>
+      {/* Languages */}
+      <LanguagesSection />
 
-      <AchievementsSection/>
+      {/* Achievements */}
+      <AchievementsSection />
 
     </div>
   );
 }
 
 export default ModernTemplate;
+

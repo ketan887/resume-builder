@@ -1,9 +1,10 @@
+
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
 
 function Header() {
   const { resumeData } = useContext(ResumeContext);
-  const { personalInfo } = resumeData;
+  const { personalInfo = {} } = resumeData;
 
   const contactInfo = [
     personalInfo.email,
@@ -18,26 +19,46 @@ function Header() {
   ].filter(Boolean);
 
   return (
-    <header className="pb-6 border-b border-slate-300">
+    <header className="border-b border-slate-300 pb-5">
 
-      <h1 className="text-4xl font-bold text-slate-900 tracking-tight">
+      {/* Name */}
+      <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
         {personalInfo.fullName || "Your Name"}
       </h1>
 
-      <p className="mt-2 text-xl font-medium text-slate-700">
-        {personalInfo.title || "Professional Title"}
-      </p>
-
-      {contactInfo.length > 0 && (
-        <p className="mt-4 text-sm text-slate-600 leading-7">
-          {contactInfo.join(" | ")}
+      {/* Professional Title */}
+      {personalInfo.title && (
+        <p className="mt-1 text-lg font-medium text-slate-700">
+          {personalInfo.title}
         </p>
       )}
 
+      {/* Contact Information */}
+      {contactInfo.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600">
+          {contactInfo.map((item, index) => (
+            <span key={`${item}-${index}`}>
+              {item}
+              {index < contactInfo.length - 1 && (
+                <span className="ml-3 text-slate-400">|</span>
+              )}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Professional Links */}
       {links.length > 0 && (
-        <p className="mt-2 text-sm text-slate-600 break-all">
-          {links.join(" | ")}
-        </p>
+        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600 break-all">
+          {links.map((link, index) => (
+            <span key={`${link}-${index}`}>
+              {link}
+              {index < links.length - 1 && (
+                <span className="ml-3 text-slate-400">|</span>
+              )}
+            </span>
+          ))}
+        </div>
       )}
 
     </header>
@@ -45,3 +66,4 @@ function Header() {
 }
 
 export default Header;
+

@@ -1,77 +1,91 @@
+
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
-
-import ResumeSection from "../../resume/ResumeSection";
-import ResumeHeading from "../../resume/ResumeHeading";
 
 function ProjectsSection() {
   const { resumeData } = useContext(ResumeContext);
 
-  const projects = resumeData.projects.filter(
-    (project) => project.title || project.description
+  const projects = resumeData?.projects || [];
+
+  const validProjects = projects.filter(
+    (project) =>
+      project.title ||
+      project.techStack ||
+      project.description
   );
 
-  if (projects.length === 0) return null;
+  if (validProjects.length === 0) {
+    return null;
+  }
 
   return (
-    <ResumeSection>
-      <ResumeHeading>Projects</ResumeHeading>
+    <section className="mt-5">
 
-      {projects.map((project) => (
-        <div key={project.id} className="mb-6 last:mb-0">
+      {/* Section Heading */}
+      <h2 className="border-b border-slate-300 pb-1 text-sm font-bold uppercase tracking-wide text-slate-900">
+        Projects
+      </h2>
 
-          {/* Project Title */}
-          <h3 className="text-base font-semibold text-slate-900">
-            {project.title || "Project Title"}
-          </h3>
+      {/* Projects */}
+      <div className="mt-4 space-y-5">
 
-          {/* Tech Stack */}
-          {project.techStack && (
-            <p className="mt-1 text-[15px] text-slate-600">
-              <span className="font-semibold">Tech Stack:</span>{" "}
-              {project.techStack}
-            </p>
-          )}
+        {validProjects.map((project) => (
+          <article key={project.id}>
 
-          {/* Description */}
-          {project.description && (
-            <p className="mt-3 text-[15px] leading-7 text-slate-700 whitespace-pre-line">
-              {project.description}
-            </p>
-          )}
+            {/* Project Title */}
+            <h3 className="text-[15px] font-bold text-slate-900">
+              {project.title || "Project Title"}
+            </h3>
 
-          {/* Links */}
-          {(project.github || project.liveDemo) && (
-            <div className="mt-3 flex flex-wrap gap-6 text-[14px]">
+            {/* Technology Stack */}
+            {project.techStack?.trim() && (
+              <p className="mt-1 text-[13px] font-medium text-slate-600">
+                Technologies: {project.techStack}
+              </p>
+            )}
 
-              {project.github && (
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  GitHub Repository
-                </a>
-              )}
+            {/* Description */}
+            {project.description?.trim() && (
+              <p className="mt-2 whitespace-pre-line text-[14px] leading-6 text-slate-700">
+                {project.description}
+              </p>
+            )}
 
-              {project.liveDemo && (
-                <a
-                  href={project.liveDemo}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  Live Demo
-                </a>
-              )}
+            {/* Project Links */}
+            {(project.github || project.liveDemo) && (
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
 
-            </div>
-          )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all text-slate-700 underline"
+                  >
+                    GitHub: {project.github}
+                  </a>
+                )}
 
-        </div>
-      ))}
-    </ResumeSection>
+                {project.liveDemo && (
+                  <a
+                    href={project.liveDemo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all text-slate-700 underline"
+                  >
+                    Live Demo: {project.liveDemo}
+                  </a>
+                )}
+
+              </div>
+            )}
+
+          </article>
+        ))}
+
+      </div>
+
+    </section>
   );
 }
 
