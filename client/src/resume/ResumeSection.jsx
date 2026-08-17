@@ -1,6 +1,6 @@
 function ResumeSection({ children }) {
   return (
-    <section className="mt-7 first:mt-0">
+    <section className="mt-1 first:mt-0">
       {children}
     </section>
   );

@@ -3,6 +3,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 const aiRoutes = require("./routes/aiRoutes");
+const experienceRoutes = require("./routes/experienceRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+
 
 const app = express();
 
@@ -21,6 +24,8 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/ai", aiRoutes);
+app.use("/api/experience", experienceRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Start server
 app.listen(PORT, () => {

@@ -1,10 +1,9 @@
-
 import { useContext } from "react";
 import { ResumeContext } from "../../context/ResumeContext";
 
 function Header() {
   const { resumeData } = useContext(ResumeContext);
-  const { personalInfo = {} } = resumeData;
+  const { personalInfo } = resumeData;
 
   const contactInfo = [
     personalInfo.email,
@@ -19,46 +18,30 @@ function Header() {
   ].filter(Boolean);
 
   return (
-    <header className="border-b border-slate-300 pb-5">
+    <header className="border-b border-slate-300 pb-3">
 
       {/* Name */}
-      <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <h1 className="text-[27px] leading-tight font-bold tracking-tight text-slate-900">
         {personalInfo.fullName || "Your Name"}
       </h1>
 
       {/* Professional Title */}
-      {personalInfo.title && (
-        <p className="mt-1 text-lg font-medium text-slate-700">
-          {personalInfo.title}
-        </p>
-      )}
+      <p className="mt-1 text-[16px] font-medium text-slate-700">
+        {personalInfo.title || "Professional Title"}
+      </p>
 
       {/* Contact Information */}
       {contactInfo.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600">
-          {contactInfo.map((item, index) => (
-            <span key={`${item}-${index}`}>
-              {item}
-              {index < contactInfo.length - 1 && (
-                <span className="ml-3 text-slate-400">|</span>
-              )}
-            </span>
-          ))}
-        </div>
+        <p className="mt-2 text-[11px] leading-5 text-slate-600">
+          {contactInfo.join(" | ")}
+        </p>
       )}
 
-      {/* Professional Links */}
+      {/* Links */}
       {links.length > 0 && (
-        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-slate-600 break-all">
-          {links.map((link, index) => (
-            <span key={`${link}-${index}`}>
-              {link}
-              {index < links.length - 1 && (
-                <span className="ml-3 text-slate-400">|</span>
-              )}
-            </span>
-          ))}
-        </div>
+        <p className="mt-0.5 break-all text-[11px] leading-5 text-slate-600">
+          {links.join(" | ")}
+        </p>
       )}
 
     </header>
@@ -66,4 +49,3 @@ function Header() {
 }
 
 export default Header;
-

@@ -5,37 +5,35 @@ function ResumeItem({
   description,
 }) {
   return (
-    <div className="mb-6 last:mb-0">
+    <div className="mb-2 last:mb-0">
 
-      <div className="flex justify-between items-start gap-6">
+      <div className="flex items-start justify-between gap-4">
 
-        <div className="flex-1">
-
-          <h3 className="text-base font-semibold text-slate-900">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-[14px] font-semibold text-slate-900">
             {title}
           </h3>
 
           {subtitle && (
-            <p className="mt-1 text-[15px] text-slate-600">
+            <p className="mt-0.5 text-[12px] text-slate-600">
               {subtitle}
             </p>
           )}
-
         </div>
 
         {rightText && (
-          <span className="text-sm text-slate-500 whitespace-nowrap">
+          <span className="shrink-0 whitespace-nowrap text-[11px] text-slate-500">
             {rightText}
           </span>
         )}
 
       </div>
 
-     {description && (
-  <p className="mt-2 text-[15px] leading-7 text-slate-700 whitespace-pre-line">
-    {description}
-  </p>
-)}
+      {description && (
+        <p className="mt-1 text-[12px] leading-5 text-slate-700 whitespace-pre-line">
+          {description}
+        </p>
+      )}
 
     </div>
   );

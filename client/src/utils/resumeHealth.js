@@ -12,6 +12,8 @@ const ACTION_VERBS = [
   "integrated",
   "automated",
   "engineered",
+  "configured",
+  "launched",
 ];
 
 const KEYWORDS = [
@@ -36,102 +38,151 @@ const KEYWORDS = [
 ];
 
 export function analyzeResumeHealth(resumeData) {
-
   const info = resumeData.personalInfo || {};
 
-  // Combine resume text
+  // --------------------------------
+  // Combine Resume Text
+  // --------------------------------
+
   const text = [
-    info.summary,
+    info.summary || "",
 
-    ...(resumeData.experience || []).map(e => e.description),
+    ...(resumeData.experience || []).map(
+      (experience) => experience.description || ""
+    ),
 
-    ...(resumeData.projects || []).map(p => p.description),
+    ...(resumeData.projects || []).map(
+      (project) => project.description || ""
+    ),
 
-    ...(resumeData.skills || [])
+    ...(resumeData.skills || []),
   ]
     .join(" ")
     .toLowerCase();
 
-  // -----------------------
-  // Action Verbs
-  // -----------------------
+  // --------------------------------
+  // Word Count
+  // --------------------------------
 
-  const actionCount = ACTION_VERBS.filter(word =>
-    text.includes(word)
-  ).length;
+  const words = text
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const wordCount = words.length;
+
+  // --------------------------------
+  // Action Verbs
+  // --------------------------------
+
+  const actionCount = ACTION_VERBS.filter((verb) => {
+    const regex = new RegExp(`\\b${verb}\\b`, "i");
+    return regex.test(text);
+  }).length;
 
   const actionVerbs = Math.min(
     100,
-    actionCount * 10
+    actionCount * 8
   );
 
-  // -----------------------
-  // Keywords
-  // -----------------------
+  // --------------------------------
+  // Technical Keywords
+  // --------------------------------
 
-  const keywordCount = KEYWORDS.filter(word =>
-    text.includes(word)
-  ).length;
+  const keywordCount = KEYWORDS.filter((keyword) => {
+    const regex = new RegExp(`\\b${keyword}\\b`, "i");
+    return regex.test(text);
+  }).length;
 
   const keywords = Math.min(
     100,
     keywordCount * 6
   );
 
-  // -----------------------
+  // --------------------------------
   // Readability
-  // -----------------------
-
-  const words = text.split(/\s+/).length;
+  // --------------------------------
 
   let readability = 60;
 
-  if (words > 120) readability = 80;
-  if (words > 250) readability = 90;
-  if (words > 400) readability = 100;
+  // Good target for a concise resume
+  if (wordCount >= 250 && wordCount <= 700) {
+    readability = 100;
+  } else if (wordCount >= 180 && wordCount < 250) {
+    readability = 90;
+  } else if (wordCount > 700 && wordCount <= 850) {
+    readability = 85;
+  } else if (wordCount >= 100 && wordCount < 180) {
+    readability = 75;
+  } else if (wordCount > 850) {
+    readability = 60;
+  }
 
-  // -----------------------
+  // --------------------------------
   // Completeness
-  // -----------------------
+  // --------------------------------
 
   let filled = 0;
   let total = 0;
 
-  function check(value) {
+  const check = (value) => {
     total++;
-    if (value && value.toString().trim())
-      filled++;
-  }
 
+    if (
+      value !== undefined &&
+      value !== null &&
+      value.toString().trim()
+    ) {
+      filled++;
+    }
+  };
+
+  // Personal information
   check(info.fullName);
   check(info.email);
   check(info.phone);
+  check(info.location);
+  check(info.linkedin);
+  check(info.github);
   check(info.summary);
 
-  (resumeData.education || []).forEach(e => {
-    check(e.degree);
-    check(e.institution);
+  // Education
+  (resumeData.education || []).forEach((education) => {
+    check(education.degree);
+    check(education.institution);
+    check(education.startDate);
+    check(education.endDate);
   });
 
-  (resumeData.experience || []).forEach(e => {
-    check(e.company);
-    check(e.position);
-    check(e.description);
+  // Experience
+  (resumeData.experience || []).forEach((experience) => {
+    check(experience.company);
+    check(experience.position);
+    check(experience.startDate);
+    check(experience.endDate);
+    check(experience.description);
   });
 
-  (resumeData.projects || []).forEach(p => {
-    check(p.title);
-    check(p.description);
-    check(p.techStack);
+  // Projects
+  (resumeData.projects || []).forEach((project) => {
+    check(project.title);
+    check(project.description);
+    check(project.techStack);
   });
 
-  const completeness = Math.round(
-    (filled / total) * 100
-  );
+  // Skills
+  if (resumeData.skills?.length) {
+    check(resumeData.skills.join(", "));
+  }
 
-  // -----------------------
+  const completeness =
+    total > 0
+      ? Math.round((filled / total) * 100)
+      : 0;
+
+  // --------------------------------
   // Content Quality
-  // -----------------------
+  // --------------------------------
 
   const contentQuality = Math.round(
     (
@@ -142,27 +193,31 @@ export function analyzeResumeHealth(resumeData) {
     ) / 4
   );
 
+  // --------------------------------
+  // Overall Health
+  // --------------------------------
+
+  const overall = Math.round(
+    (
+      readability +
+      keywords +
+      actionVerbs +
+      completeness +
+      contentQuality
+    ) / 5
+  );
+
   return {
-
     readability,
-
     keywords,
-
     actionVerbs,
-
     completeness,
-
     contentQuality,
+    overall,
 
-    overall: Math.round(
-      (
-        readability +
-        keywords +
-        actionVerbs +
-        completeness +
-        contentQuality
-      ) / 5
-    ),
-
+    // Useful for UI
+    wordCount,
+    actionCount,
+    keywordCount,
   };
 }

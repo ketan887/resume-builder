@@ -1,6 +1,11 @@
-
-import { useContext } from "react";
-import { Briefcase, Plus, Trash2, Lightbulb } from "lucide-react";
+import { useContext, useState } from "react";
+import {
+  Briefcase,
+  Plus,
+  Trash2,
+  Lightbulb,
+  Sparkles,
+} from "lucide-react";
 
 import { ResumeContext } from "../context/ResumeContext";
 import InputField from "../components/ui/InputField";
@@ -10,6 +15,10 @@ function Experience() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
 
   const experience = resumeData.experience || [];
+
+  const [aiLoading, setAiLoading] = useState({});
+  const [aiSuggestions, setAiSuggestions] = useState({});
+  const [aiErrors, setAiErrors] = useState({});
 
   const handleChange = (id, field, value) => {
     setResumeData((prev) => ({
@@ -49,6 +58,124 @@ function Experience() {
       experience: prev.experience.filter(
         (exp) => exp.id !== id
       ),
+    }));
+
+    setAiSuggestions((prev) => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
+
+    setAiErrors((prev) => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
+  };
+
+  // =========================
+  // AI IMPROVE EXPERIENCE
+  // =========================
+
+  const improveExperience = async (exp) => {
+    if (!exp.description?.trim()) {
+      setAiErrors((prev) => ({
+        ...prev,
+        [exp.id]: "Please add your experience description first.",
+      }));
+
+      return;
+    }
+
+    setAiLoading((prev) => ({
+      ...prev,
+      [exp.id]: true,
+    }));
+
+    setAiErrors((prev) => ({
+      ...prev,
+      [exp.id]: "",
+    }));
+
+    setAiSuggestions((prev) => ({
+      ...prev,
+      [exp.id]: "",
+    }));
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/experience/improve",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            description: exp.description,
+            position: exp.position,
+            company: exp.company,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "AI improvement failed."
+        );
+      }
+
+      setAiSuggestions((prev) => ({
+        ...prev,
+        [exp.id]: data.improvedDescription,
+      }));
+    } catch (error) {
+      console.error("AI Experience Error:", error);
+
+      setAiErrors((prev) => ({
+        ...prev,
+        [exp.id]:
+          "Unable to improve experience. Please try again.",
+      }));
+    } finally {
+      setAiLoading((prev) => ({
+        ...prev,
+        [exp.id]: false,
+      }));
+    }
+  };
+
+  // =========================
+  // APPLY AI SUGGESTION
+  // =========================
+
+  const applySuggestion = (id) => {
+    const suggestion = aiSuggestions[id];
+
+    if (!suggestion) return;
+
+    handleChange(id, "description", suggestion);
+
+    setAiSuggestions((prev) => ({
+      ...prev,
+      [id]: "",
+    }));
+  };
+
+  // =========================
+  // CANCEL AI SUGGESTION
+  // =========================
+
+  const cancelSuggestion = (id) => {
+    setAiSuggestions((prev) => ({
+      ...prev,
+      [id]: "",
+    }));
+
+    setAiErrors((prev) => ({
+      ...prev,
+      [id]: "",
     }));
   };
 
@@ -209,11 +336,45 @@ function Experience() {
             {/* Description */}
             <div className="mt-5">
 
+              {/* Description Header */}
+              <div className="mb-3 flex items-center justify-between">
+
+                <label className="text-sm font-semibold text-slate-700">
+                  Responsibilities & Achievements
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => improveExperience(exp)}
+                  disabled={aiLoading[exp.id]}
+                  className="
+                    flex items-center gap-2
+                    rounded-xl
+                    bg-violet-600
+                    px-4 py-2
+                    text-sm font-semibold
+                    text-white
+                    shadow-sm
+                    transition
+                    hover:bg-violet-700
+                    disabled:cursor-not-allowed
+                    disabled:opacity-60
+                  "
+                >
+                  <Sparkles size={16} />
+
+                  {aiLoading[exp.id]
+                    ? "Improving..."
+                    : "AI Improve"}
+                </button>
+
+              </div>
+
               <TextAreaField
-                label="Responsibilities & Achievements"
-                placeholder={`Example:
-• Developed responsive React applications used by 500+ users.
-• Integrated REST APIs using Node.js and Express.
+                label=""
+                placeholder={`Example: 
+• Developed responsive React applications used by 500+ users. 
+• Integrated REST APIs using Node.js and Express. 
 • Improved application performance by 25%.`}
                 value={exp.description}
                 onChange={(e) =>
@@ -227,6 +388,76 @@ function Experience() {
                 required
                 helperText="Use action verbs and include measurable results whenever possible."
               />
+
+              {/* AI Error */}
+              {aiErrors[exp.id] && (
+                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                  {aiErrors[exp.id]}
+                </div>
+              )}
+
+              {/* AI Suggestion */}
+              {aiSuggestions[exp.id] && (
+                <div className="mt-4 rounded-2xl border border-violet-200 bg-violet-50 p-5">
+
+                  <div className="flex items-center gap-2">
+                    <Sparkles
+                      size={18}
+                      className="text-violet-600"
+                    />
+
+                    <h3 className="font-bold text-violet-900">
+                      AI Improved Experience
+                    </h3>
+                  </div>
+
+                  <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-700">
+                    {aiSuggestions[exp.id]}
+                  </p>
+
+                  <div className="mt-5 flex gap-3">
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        applySuggestion(exp.id)
+                      }
+                      className="
+                        rounded-xl
+                        bg-violet-600
+                        px-5 py-2
+                        text-sm font-semibold
+                        text-white
+                        transition
+                        hover:bg-violet-700
+                      "
+                    >
+                      Apply
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        cancelSuggestion(exp.id)
+                      }
+                      className="
+                        rounded-xl
+                        border border-slate-300
+                        bg-white
+                        px-5 py-2
+                        text-sm font-semibold
+                        text-slate-700
+                        transition
+                        hover:bg-slate-100
+                      "
+                    >
+                      Cancel
+                    </button>
+
+                  </div>
+
+                </div>
+              )}
 
               {/* ATS Tip */}
               <div className="mt-4 flex gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4">
@@ -277,6 +508,7 @@ function Experience() {
         "
       >
         <Plus size={19} />
+
         Add Experience
       </button>
 
@@ -285,4 +517,3 @@ function Experience() {
 }
 
 export default Experience;
-

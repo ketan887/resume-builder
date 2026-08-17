@@ -1,15 +1,119 @@
-  
+import { useContext, useState } from "react";
 import {
   Download,
   Sparkles,
   CheckCircle2,
   Eye,
   FileText,
+  Loader2,
 } from "lucide-react";
 
+import { ResumeContext } from "../../context/ResumeContext";
 import { downloadResume } from "../../utils/downloadResume";
 
 function BuilderHeader() {
+  const { resumeData, setResumeData } =
+    useContext(ResumeContext);
+
+  const [isOptimizing, setIsOptimizing] = useState(false);
+
+  const optimizeResume = async () => {
+    try {
+      setIsOptimizing(true);
+
+      const response = await fetch(
+        "http://localhost:5000/api/ai/optimize-resume",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            resumeData,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to optimize resume"
+        );
+      }
+
+      const optimized = data.optimizedResume;
+
+      // Update only the AI-optimized fields.
+      setResumeData((prev) => ({
+        ...prev,
+
+        personalInfo: {
+          ...prev.personalInfo,
+          summary:
+            optimized.summary ||
+            prev.personalInfo?.summary ||
+            "",
+        },
+
+        experience: (prev.experience || []).map(
+          (experience) => {
+            const optimizedExperience =
+              optimized.experience?.find(
+                (item) =>
+                  String(item.id) ===
+                  String(experience.id)
+              );
+
+            return optimizedExperience
+              ? {
+                  ...experience,
+                  description:
+                    optimizedExperience.description ||
+                    experience.description,
+                }
+              : experience;
+          }
+        ),
+
+        projects: (prev.projects || []).map(
+          (project) => {
+            const optimizedProject =
+              optimized.projects?.find(
+                (item) =>
+                  String(item.id) ===
+                  String(project.id)
+              );
+
+            return optimizedProject
+              ? {
+                  ...project,
+                  description:
+                    optimizedProject.description ||
+                    project.description,
+                }
+              : project;
+          }
+        ),
+      }));
+
+      alert("Resume optimized successfully! ✨");
+
+    } catch (error) {
+      console.error(
+        "Resume Optimization Error:",
+        error
+      );
+
+      alert(
+        "Failed to optimize resume. Please try again."
+      );
+
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
 
@@ -67,6 +171,8 @@ function BuilderHeader() {
             {/* AI Improve */}
             <button
               type="button"
+              onClick={optimizeResume}
+              disabled={isOptimizing}
               className="
                 flex items-center gap-2
                 rounded-xl
@@ -77,16 +183,36 @@ function BuilderHeader() {
                 shadow-sm
                 transition
                 hover:bg-violet-700
+                disabled:cursor-not-allowed
+                disabled:opacity-70
               "
             >
-              <Sparkles size={18} />
-              AI Improve
+
+              {isOptimizing ? (
+                <>
+                  <Loader2
+                    size={18}
+                    className="animate-spin"
+                  />
+
+                  Optimizing...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={18} />
+
+                  AI Improve
+                </>
+              )}
+
             </button>
 
             {/* Download PDF */}
             <button
               type="button"
-              onClick={downloadResume}
+              onClick={() =>
+                downloadResume(resumeData)
+              }
               className="
                 flex items-center gap-2
                 rounded-xl
@@ -115,4 +241,3 @@ function BuilderHeader() {
 }
 
 export default BuilderHeader;
-

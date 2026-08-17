@@ -14,226 +14,443 @@ const ACTION_VERBS = [
   "engineered",
   "configured",
   "launched",
+  "maintained",
+  "tested",
+  "analyzed",
+  "created",
+  "delivered",
 ];
 
-export function calculateATSScore(resumeData) {
-  let totalScore = 0;
+const TECHNICAL_KEYWORDS = [
+  "react",
+  "react.js",
+  "node",
+  "node.js",
+  "express",
+  "express.js",
+  "mongodb",
+  "mongoose",
+  "javascript",
+  "typescript",
+  "python",
+  "java",
+  "sql",
+  "html",
+  "css",
+  "tailwind",
+  "rest",
+  "api",
+  "jwt",
+  "git",
+  "github",
+  "docker",
+  "aws",
+  "firebase",
+  "supabase",
+];
 
+function hasActionVerb(text = "") {
+  const lowerText = text.toLowerCase();
+
+  return ACTION_VERBS.some((verb) =>
+    lowerText.includes(verb)
+  );
+}
+
+function hasTechnicalKeyword(text = "") {
+  const lowerText = text.toLowerCase();
+
+  return TECHNICAL_KEYWORDS.some((keyword) =>
+    lowerText.includes(keyword)
+  );
+}
+
+function hasMetric(text = "") {
+  if (!text) return false;
+
+  return (
+    /\d+%/.test(text) ||
+    /\d+\+/.test(text) ||
+    /\d+\s*(users|clients|projects|requests|records|applications)/i.test(
+      text
+    )
+  );
+}
+
+export function calculateATSScore(resumeData) {
   const suggestions = [];
   const sectionScores = {};
 
-  // ----------------------------
-  // PERSONAL INFO (10)
-  // ----------------------------
+  let totalScore = 0;
 
-  let personal = 0;
-  const info = resumeData.personalInfo || {};
+  const personalInfo = resumeData.personalInfo || {};
 
-  if (info.fullName) personal += 2;
-  if (info.email) personal += 2;
-  if (info.phone) personal += 2;
-  if (info.location) personal += 1;
-  if (info.linkedin) personal += 1;
-  if (info.github || info.portfolio) personal += 1;
+  // =====================================================
+  // PERSONAL INFORMATION — 10 POINTS
+  // =====================================================
 
-  if (info.summary && info.summary.length >= 80)
-    personal += 1;
+  let personalScore = 0;
 
-  if (personal < 10)
-    suggestions.push("Complete all contact information.");
+  if (personalInfo.fullName) personalScore += 2;
+  if (personalInfo.email) personalScore += 2;
+  if (personalInfo.phone) personalScore += 2;
+  if (personalInfo.location) personalScore += 1;
+  if (personalInfo.linkedin) personalScore += 1;
+  if (personalInfo.github || personalInfo.portfolio) {
+    personalScore += 1;
+  }
 
-  sectionScores.personal = personal;
-  totalScore += personal;
+  if (personalInfo.title) personalScore += 1;
 
-  // ----------------------------
-  // EDUCATION (10)
-  // ----------------------------
+  if (!personalInfo.email) {
+    suggestions.push("Add a professional email address.");
+  }
+
+  if (!personalInfo.phone) {
+    suggestions.push("Add your phone number.");
+  }
+
+  if (!personalInfo.linkedin) {
+    suggestions.push("Add your LinkedIn profile.");
+  }
+
+  sectionScores.personal = Math.min(personalScore, 10);
+  totalScore += sectionScores.personal;
+
+  // =====================================================
+  // PROFESSIONAL SUMMARY — 10 POINTS
+  // =====================================================
+
+  let summaryScore = 0;
+
+  const summary = personalInfo.summary?.trim() || "";
+
+  if (summary) {
+    summaryScore += 4;
+
+    if (summary.length >= 80 && summary.length <= 500) {
+      summaryScore += 2;
+    }
+
+    if (hasTechnicalKeyword(summary)) {
+      summaryScore += 2;
+    }
+
+    if (summary.split(/\s+/).length <= 80) {
+      summaryScore += 2;
+    }
+  } else {
+    suggestions.push(
+      "Add a concise professional summary."
+    );
+  }
+
+  if (summary.length > 600) {
+    suggestions.push(
+      "Shorten your professional summary."
+    );
+  }
+
+  sectionScores.summary = Math.min(summaryScore, 10);
+  totalScore += sectionScores.summary;
+
+  // =====================================================
+  // EDUCATION — 10 POINTS
+  // =====================================================
 
   let educationScore = 0;
 
   const education =
     resumeData.education?.filter(
-      (e) => e.degree || e.institution
+      (education) =>
+        education.degree ||
+        education.institution
     ) || [];
 
-  if (education.length > 0)
-    educationScore = 10;
-  else
-    suggestions.push("Add your education.");
+  if (education.length > 0) {
+    educationScore += 6;
 
-  sectionScores.education = educationScore;
-  totalScore += educationScore;
+    const completeEducation = education.some(
+      (education) =>
+        education.degree &&
+        education.institution
+    );
 
-  // ----------------------------
-  // EXPERIENCE (20)
-  // ----------------------------
+    if (completeEducation) {
+      educationScore += 4;
+    }
+  } else {
+    suggestions.push("Add your education details.");
+  }
+
+  sectionScores.education = Math.min(
+    educationScore,
+    10
+  );
+
+  totalScore += sectionScores.education;
+
+  // =====================================================
+  // EXPERIENCE — 20 POINTS
+  // =====================================================
 
   let experienceScore = 0;
 
   const experience =
     resumeData.experience?.filter(
-      (e) => e.company || e.position
+      (experience) =>
+        experience.company ||
+        experience.position
     ) || [];
 
   if (experience.length > 0) {
+    experienceScore += 8;
 
-    experienceScore += 10;
+    let hasGoodDescription = false;
+    let hasActionVerb = false;
+    let hasMeasurement = false;
 
-    experience.forEach((exp) => {
+    experience.forEach((experience) => {
+      const description =
+        experience.description || "";
 
-      if (exp.description?.length > 80)
-        experienceScore += 3;
+      if (description.length >= 80) {
+        hasGoodDescription = true;
+      }
 
-      const text =
-        exp.description?.toLowerCase() || "";
+      if (hasActionVerb(description)) {
+        hasActionVerb = true;
+      }
 
-      const hasVerb = ACTION_VERBS.some((verb) =>
-        text.includes(verb)
-      );
-
-      if (hasVerb)
-        experienceScore += 2;
-
+      if (hasMetric(description)) {
+        hasMeasurement = true;
+      }
     });
 
-    experienceScore = Math.min(
-      experienceScore,
-      20
-    );
+    if (hasGoodDescription) {
+      experienceScore += 4;
+    }
 
+    if (hasActionVerb) {
+      experienceScore += 4;
+    }
+
+    if (hasMeasurement) {
+      experienceScore += 4;
+    }
   } else {
     suggestions.push(
-      "Add internship or work experience."
+      "Add work experience or internship experience."
     );
   }
 
-  sectionScores.experience = experienceScore;
-  totalScore += experienceScore;
+  if (
+    experience.length > 0 &&
+    !experience.some((experience) =>
+      hasMetric(experience.description)
+    )
+  ) {
+    suggestions.push(
+      "Add measurable results to your experience bullets."
+    );
+  }
 
-  // ----------------------------
-  // PROJECTS (20)
-  // ----------------------------
+  sectionScores.experience = Math.min(
+    experienceScore,
+    20
+  );
+
+  totalScore += sectionScores.experience;
+
+  // =====================================================
+  // PROJECTS — 20 POINTS
+  // =====================================================
 
   let projectScore = 0;
 
   const projects =
     resumeData.projects?.filter(
-      (p) => p.title
+      (project) =>
+        project.title ||
+        project.description
     ) || [];
 
   if (projects.length > 0) {
+    projectScore += 5;
 
-    projects.forEach((project) => {
-
-      if (project.title)
-        projectScore += 3;
-
-      if (project.description?.length > 80)
-        projectScore += 4;
-
-      if (project.techStack)
-        projectScore += 3;
-
-      if (project.github)
-        projectScore += 2;
-
-      if (project.liveDemo)
-        projectScore += 2;
-
-    });
-
-    projectScore = Math.min(
-      projectScore,
-      20
+    const completeProject = projects.some(
+      (project) =>
+        project.title &&
+        project.techStack &&
+        project.description
     );
 
+    if (completeProject) {
+      projectScore += 5;
+    }
+
+    const technicalProject = projects.some(
+      (project) =>
+        hasTechnicalKeyword(
+          `${project.techStack || ""} ${
+            project.description || ""
+          }`
+        )
+    );
+
+    if (technicalProject) {
+      projectScore += 4;
+    }
+
+    const strongProject = projects.some(
+      (project) =>
+        hasActionVerb(
+          project.description || ""
+        )
+    );
+
+    if (strongProject) {
+      projectScore += 3;
+    }
+
+    const projectWithLink = projects.some(
+      (project) =>
+        project.github ||
+        project.liveDemo
+    );
+
+    if (projectWithLink) {
+      projectScore += 3;
+    }
   } else {
-
     suggestions.push(
-      "Add at least one complete project."
+      "Add at least one technical project."
     );
-
   }
 
-  sectionScores.projects = projectScore;
-  totalScore += projectScore;
+  sectionScores.projects = Math.min(
+    projectScore,
+    20
+  );
 
-  // ----------------------------
-  // SKILLS (15)
-  // ----------------------------
+  totalScore += sectionScores.projects;
 
-  let skillScore = 0;
+  // =====================================================
+  // TECHNICAL SKILLS — 15 POINTS
+  // =====================================================
 
-  const skills = resumeData.skills || [];
+  let skillsScore = 0;
 
-  if (skills.length >= 12)
-    skillScore = 15;
-  else if (skills.length >= 8)
-    skillScore = 12;
-  else if (skills.length >= 5)
-    skillScore = 9;
-  else
+  const skills =
+    resumeData.skills || [];
+
+  if (skills.length >= 10) {
+    skillsScore = 10;
+  } else if (skills.length >= 7) {
+    skillsScore = 8;
+  } else if (skills.length >= 4) {
+    skillsScore = 6;
+  } else if (skills.length > 0) {
+    skillsScore = 4;
+  } else {
     suggestions.push(
-      "Add more technical skills."
+      "Add relevant technical skills."
     );
+  }
 
-  sectionScores.skills = skillScore;
-  totalScore += skillScore;
+  const skillsText =
+    skills.join(" ").toLowerCase();
 
-  // ----------------------------
-  // CERTIFICATES (5)
-  // ----------------------------
+  const technicalSkillCount =
+    TECHNICAL_KEYWORDS.filter((keyword) =>
+      skillsText.includes(keyword)
+    ).length;
+
+  if (technicalSkillCount >= 5) {
+    skillsScore += 5;
+  } else if (technicalSkillCount >= 3) {
+    skillsScore += 3;
+  }
+
+  sectionScores.skills = Math.min(
+    skillsScore,
+    15
+  );
+
+  totalScore += sectionScores.skills;
+
+  // =====================================================
+  // CERTIFICATES — 5 POINTS
+  // =====================================================
 
   let certificateScore = 0;
 
-  if (
-    resumeData.certificates?.some(
-      (c) => c.name
-    )
-  )
+  const certificates =
+    resumeData.certificates?.filter(
+      (certificate) =>
+        certificate.name
+    ) || [];
+
+  if (certificates.length > 0) {
     certificateScore = 5;
+  }
 
   sectionScores.certificates =
     certificateScore;
 
   totalScore += certificateScore;
 
-  // ----------------------------
-  // ACHIEVEMENTS (5)
-  // ----------------------------
+  // =====================================================
+  // ACHIEVEMENTS — 5 POINTS
+  // =====================================================
 
   let achievementScore = 0;
 
-  if (
-    resumeData.achievements?.some(
-      (a) => a.title
-    )
-  )
+  const achievements =
+    resumeData.achievements?.filter(
+      (achievement) =>
+        achievement.title ||
+        achievement.description
+    ) || [];
+
+  if (achievements.length > 0) {
     achievementScore = 5;
+  }
 
   sectionScores.achievements =
     achievementScore;
 
   totalScore += achievementScore;
 
-  // ----------------------------
-  // QUALITY BONUS (15)
-  // ----------------------------
+  // =====================================================
+  // LANGUAGES — 5 POINTS
+  // =====================================================
 
-  let quality = 0;
+  let languageScore = 0;
 
-  if (suggestions.length <= 2)
-    quality = 15;
-  else if (suggestions.length <= 5)
-    quality = 10;
-  else
-    quality = 5;
+  const languages =
+    resumeData.languages?.filter(
+      (language) =>
+        language.name
+    ) || [];
 
-  sectionScores.quality = quality;
+  if (languages.length > 0) {
+    languageScore = 5;
+  }
 
-  totalScore += quality;
+  sectionScores.languages =
+    languageScore;
 
-  totalScore = Math.min(totalScore, 100);
+  totalScore += languageScore;
+
+  // =====================================================
+  // FINAL SCORE
+  // =====================================================
+
+  totalScore = Math.min(
+    Math.round(totalScore),
+    100
+  );
 
   return {
     score: totalScore,
