@@ -11,6 +11,9 @@ import { ResumeContext } from "../context/ResumeContext";
 import InputField from "../components/ui/InputField";
 import TextAreaField from "../components/ui/TextAreaField";
 
+// Backend API URL
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Experience() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
 
@@ -81,7 +84,8 @@ function Experience() {
     if (!exp.description?.trim()) {
       setAiErrors((prev) => ({
         ...prev,
-        [exp.id]: "Please add your experience description first.",
+        [exp.id]:
+          "Please add your experience description first.",
       }));
 
       return;
@@ -104,7 +108,7 @@ function Experience() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/experience/improve",
+        `${API_URL}/api/experience/improve`,
         {
           method: "POST",
           headers: {
@@ -196,7 +200,8 @@ function Experience() {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              Add your work experience, internships, and professional roles.
+              Add your work experience, internships, and
+              professional roles.
             </p>
           </div>
 
@@ -229,7 +234,8 @@ function Experience() {
                 </h3>
 
                 <p className="mt-1 text-xs text-slate-500">
-                  Focus on measurable responsibilities and achievements.
+                  Focus on measurable responsibilities and
+                  achievements.
                 </p>
               </div>
 
@@ -372,9 +378,9 @@ function Experience() {
 
               <TextAreaField
                 label=""
-                placeholder={`Example: 
-• Developed responsive React applications used by 500+ users. 
-• Integrated REST APIs using Node.js and Express. 
+                placeholder={`Example:
+• Developed responsive React applications used by 500+ users.
+• Integrated REST APIs using Node.js and Express.
 • Improved application performance by 25%.`}
                 value={exp.description}
                 onChange={(e) =>

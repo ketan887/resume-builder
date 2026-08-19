@@ -11,6 +11,9 @@ import {
 import { ResumeContext } from "../../context/ResumeContext";
 import { downloadResume } from "../../utils/downloadResume";
 
+// Backend API URL
+const API_URL = import.meta.env.VITE_API_URL;
+
 function BuilderHeader() {
   const { resumeData, setResumeData } =
     useContext(ResumeContext);
@@ -22,7 +25,7 @@ function BuilderHeader() {
       setIsOptimizing(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/ai/optimize-resume",
+        `${API_URL}/api/ai/optimize-resume`,
         {
           method: "POST",
           headers: {
@@ -44,7 +47,7 @@ function BuilderHeader() {
 
       const optimized = data.optimizedResume;
 
-      // Update only the AI-optimized fields.
+      // Update only the AI-optimized fields
       setResumeData((prev) => ({
         ...prev,
 
@@ -98,7 +101,6 @@ function BuilderHeader() {
       }));
 
       alert("Resume optimized successfully! ✨");
-
     } catch (error) {
       console.error(
         "Resume Optimization Error:",
@@ -108,7 +110,6 @@ function BuilderHeader() {
       alert(
         "Failed to optimize resume. Please try again."
       );
-
     } finally {
       setIsOptimizing(false);
     }
@@ -116,14 +117,11 @@ function BuilderHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
-
       <div className="mx-auto max-w-[1920px] px-4 md:px-6 xl:px-8">
-
         <div className="flex h-16 items-center justify-between">
 
           {/* Logo / Title */}
           <div className="flex items-center gap-3">
-
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg">
               <FileText size={22} />
             </div>
@@ -137,7 +135,6 @@ function BuilderHeader() {
                 Build ATS Friendly Resume
               </p>
             </div>
-
           </div>
 
           {/* Actions */}
@@ -187,24 +184,20 @@ function BuilderHeader() {
                 disabled:opacity-70
               "
             >
-
               {isOptimizing ? (
                 <>
                   <Loader2
                     size={18}
                     className="animate-spin"
                   />
-
                   Optimizing...
                 </>
               ) : (
                 <>
                   <Sparkles size={18} />
-
                   AI Improve
                 </>
               )}
-
             </button>
 
             {/* Download PDF */}
@@ -231,11 +224,8 @@ function BuilderHeader() {
             </button>
 
           </div>
-
         </div>
-
       </div>
-
     </header>
   );
 }

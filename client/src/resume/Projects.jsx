@@ -12,6 +12,9 @@ import { ResumeContext } from "../context/ResumeContext";
 import InputField from "../components/ui/InputField";
 import TextAreaField from "../components/ui/TextAreaField";
 
+// Backend API URL
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Projects() {
   const { resumeData, setResumeData } = useContext(ResumeContext);
 
@@ -81,7 +84,7 @@ function Projects() {
       setImprovingId(project.id);
 
       const response = await fetch(
-        "http://localhost:5000/api/projects/improve",
+        `${API_URL}/api/projects/improve`,
         {
           method: "POST",
           headers: {
@@ -125,7 +128,6 @@ function Projects() {
       {/* ================================
           HEADER
       ================================= */}
-
       <div>
         <div className="flex items-center gap-3">
 
@@ -147,11 +149,9 @@ function Projects() {
         </div>
       </div>
 
-
       {/* ================================
           PROJECT CARDS
       ================================= */}
-
       <div className="space-y-6">
 
         {projects.map((project, index) => (
@@ -169,14 +169,10 @@ function Projects() {
             "
           >
 
-            {/* ================================
-                CARD HEADER
-            ================================= */}
-
+            {/* CARD HEADER */}
             <div className="mb-5 flex items-center justify-between">
 
               <div>
-
                 <h3 className="font-semibold text-slate-900">
                   Project {index + 1}
                 </h3>
@@ -185,12 +181,9 @@ function Projects() {
                   Highlight the problem, technologies,
                   and your contribution.
                 </p>
-
               </div>
 
-
               {/* REMOVE */}
-
               {projects.length > 1 && (
 
                 <button
@@ -221,15 +214,10 @@ function Projects() {
 
             </div>
 
-
-            {/* ================================
-                PROJECT INFORMATION
-            ================================= */}
-
+            {/* PROJECT INFORMATION */}
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
               {/* PROJECT TITLE */}
-
               <InputField
                 label="Project Title"
                 placeholder="e.g. AI Resume Analyzer"
@@ -244,9 +232,7 @@ function Projects() {
                 required
               />
 
-
               {/* TECHNOLOGY STACK */}
-
               <InputField
                 label="Technology Stack"
                 placeholder="React, Node.js, Express, MongoDB"
@@ -262,9 +248,7 @@ function Projects() {
                 helperText="List technologies separated by commas."
               />
 
-
               {/* GITHUB */}
-
               <InputField
                 label="GitHub Repository"
                 placeholder="https://github.com/username/project"
@@ -279,9 +263,7 @@ function Projects() {
                 type="url"
               />
 
-
               {/* LIVE DEMO */}
-
               <InputField
                 label="Live Demo"
                 placeholder="https://your-project.vercel.app"
@@ -298,47 +280,29 @@ function Projects() {
 
             </div>
 
-
-            {/* ================================
-                LINKS STATUS
-            ================================= */}
-
+            {/* LINKS STATUS */}
             {(project.github || project.liveDemo) && (
 
               <div className="mt-5 flex flex-wrap gap-3">
 
                 {project.github && (
-
                   <div className="rounded-lg bg-slate-100 px-3 py-2 text-xs text-slate-600">
-
                     GitHub link added
-
                   </div>
-
                 )}
 
-
                 {project.liveDemo && (
-
                   <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-600">
-
                     <ExternalLink size={14} />
-
                     Live demo added
-
                   </div>
-
                 )}
 
               </div>
 
             )}
 
-
-            {/* ================================
-                DESCRIPTION
-            ================================= */}
-
+            {/* DESCRIPTION */}
             <div className="mt-5">
 
               <TextAreaField
@@ -361,11 +325,7 @@ function Projects() {
                 helperText="Use action verbs, technical keywords, and measurable results."
               />
 
-
-              {/* ================================
-                  AI BUTTON
-              ================================= */}
-
+              {/* AI BUTTON */}
               <div className="mt-3 flex justify-end">
 
                 <button
@@ -400,11 +360,7 @@ function Projects() {
 
               </div>
 
-
-              {/* ================================
-                  ATS TIP
-              ================================= */}
-
+              {/* ATS TIP */}
               <div className="mt-4 flex gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4">
 
                 <Lightbulb
@@ -438,11 +394,9 @@ function Projects() {
 
       </div>
 
-
       {/* ================================
           ADD PROJECT
       ================================= */}
-
       <button
         type="button"
         onClick={addProject}
