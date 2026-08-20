@@ -18,7 +18,8 @@ function BuilderHeader() {
   const { resumeData, setResumeData } =
     useContext(ResumeContext);
 
-  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [isOptimizing, setIsOptimizing] =
+    useState(false);
 
   const optimizeResume = async () => {
     try {
@@ -47,12 +48,13 @@ function BuilderHeader() {
 
       const optimized = data.optimizedResume;
 
-      // Update only the AI-optimized fields
+      // Update only AI-optimized fields
       setResumeData((prev) => ({
         ...prev,
 
         personalInfo: {
           ...prev.personalInfo,
+
           summary:
             optimized.summary ||
             prev.personalInfo?.summary ||
@@ -101,6 +103,7 @@ function BuilderHeader() {
       }));
 
       alert("Resume optimized successfully! ✨");
+
     } catch (error) {
       console.error(
         "Resume Optimization Error:",
@@ -110,120 +113,265 @@ function BuilderHeader() {
       alert(
         "Failed to optimize resume. Please try again."
       );
+
     } finally {
       setIsOptimizing(false);
     }
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
-      <div className="mx-auto max-w-[1920px] px-4 md:px-6 xl:px-8">
-        <div className="flex h-16 items-center justify-between">
+    <header
+      className="
+        sticky top-0 z-50
+        border-b border-slate-200
+        bg-white/90
+        backdrop-blur-xl
+      "
+    >
+      <div
+        className="
+          mx-auto
+          max-w-[1920px]
+          px-3
+          sm:px-4
+          md:px-6
+          xl:px-8
+        "
+      >
+        <div
+          className="
+            flex
+            min-h-16
+            items-center
+            justify-between
+            gap-2
+          "
+        >
 
+          {/* ========================= */}
           {/* Logo / Title */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg">
-              <FileText size={22} />
+          {/* ========================= */}
+
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+
+            <div
+              className="
+                flex
+                h-9 w-9
+                sm:h-11 sm:w-11
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-blue-600
+                text-white
+                shadow-lg
+              "
+            >
+              <FileText
+                size={20}
+                className="sm:h-[22px] sm:w-[22px]"
+              />
             </div>
 
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">
+            <div className="min-w-0">
+              <h1
+                className="
+                  truncate
+                  text-sm
+                  font-bold
+                  text-slate-900
+                  sm:text-xl
+                "
+              >
                 ResumeBuilder Pro
               </h1>
 
-              <p className="text-xs text-slate-500">
+              <p
+                className="
+                  hidden
+                  text-xs
+                  text-slate-500
+                  sm:block
+                "
+              >
                 Build ATS Friendly Resume
               </p>
             </div>
+
           </div>
 
-          {/* Actions */}
-          <div className="hidden items-center gap-4 md:flex">
 
+          {/* ========================= */}
+          {/* Actions */}
+          {/* ========================= */}
+
+          <div
+            className="
+              flex
+              shrink-0
+              items-center
+              gap-1.5
+              sm:gap-2
+              md:gap-4
+            "
+          >
+
+            {/* ========================= */}
             {/* Save Status */}
-            <div className="flex items-center gap-2 text-sm text-green-600">
+            {/* ========================= */}
+
+            <div
+              className="
+                hidden
+                items-center
+                gap-2
+                text-sm
+                text-green-600
+                lg:flex
+              "
+            >
               <CheckCircle2 size={16} />
               <span>Saved just now</span>
             </div>
 
+
+            {/* ========================= */}
             {/* Preview */}
+            {/* ========================= */}
+
             <button
               type="button"
               className="
-                flex items-center gap-2
+                flex
+                items-center
+                justify-center
+                gap-2
                 rounded-xl
-                border border-slate-200
+                border
+                border-slate-200
                 bg-white
-                px-4 py-2
-                text-sm font-medium
+                px-2.5
+                py-2
+                text-sm
+                font-medium
                 text-slate-700
                 transition
                 hover:bg-slate-100
+                sm:px-3
+                md:px-4
               "
+              title="Preview"
             >
               <Eye size={18} />
-              Preview
+
+              <span className="hidden md:inline">
+                Preview
+              </span>
             </button>
 
+
+            {/* ========================= */}
             {/* AI Improve */}
+            {/* ========================= */}
+
             <button
               type="button"
               onClick={optimizeResume}
               disabled={isOptimizing}
               className="
-                flex items-center gap-2
+                flex
+                items-center
+                justify-center
+                gap-2
                 rounded-xl
                 bg-violet-600
-                px-4 py-2
-                text-sm font-medium
+                px-2.5
+                py-2
+                text-sm
+                font-medium
                 text-white
                 shadow-sm
                 transition
                 hover:bg-violet-700
+                active:scale-95
                 disabled:cursor-not-allowed
                 disabled:opacity-70
+                sm:px-3
+                md:px-4
               "
+              title="AI Improve"
             >
+
               {isOptimizing ? (
                 <>
                   <Loader2
                     size={18}
                     className="animate-spin"
                   />
-                  Optimizing...
+
+                  <span className="hidden sm:inline">
+                    Optimizing...
+                  </span>
                 </>
               ) : (
                 <>
                   <Sparkles size={18} />
-                  AI Improve
+
+                  <span className="hidden sm:inline">
+                    AI Improve
+                  </span>
                 </>
               )}
+
             </button>
 
+
+            {/* ========================= */}
             {/* Download PDF */}
+            {/* ========================= */}
+
             <button
               type="button"
               onClick={() =>
                 downloadResume(resumeData)
               }
               className="
-                flex items-center gap-2
+                flex
+                items-center
+                justify-center
+                gap-2
                 rounded-xl
                 bg-blue-600
-                px-4 py-2
-                text-sm font-medium
+                px-2.5
+                py-2
+                text-sm
+                font-medium
                 text-white
                 shadow-sm
                 transition
                 hover:bg-blue-700
                 active:scale-95
+                sm:px-3
+                md:px-4
               "
+              title="Download PDF"
             >
               <Download size={18} />
-              Download PDF
+
+              <span className="hidden sm:inline">
+                <span className="hidden md:inline">
+                  Download PDF
+                </span>
+
+                <span className="md:hidden">
+                  Download
+                </span>
+              </span>
             </button>
 
           </div>
+
         </div>
       </div>
     </header>
