@@ -1,6 +1,10 @@
+
 import { Link, NavLink } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
-import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
+import {
+  HiOutlineMenu,
+  HiOutlineX,
+} from "react-icons/hi";
 import { useState } from "react";
 
 function Navbar() {
@@ -9,26 +13,25 @@ function Navbar() {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Resume Builder", path: "/builder" },
-    { name: "Templates", path: "/templates" },
-    { name: "ATS Checker", path: "/ats-checker" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 shadow-sm backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+
         {/* Logo */}
         <Link
           to="/"
           className="flex items-center gap-2 text-2xl font-bold text-blue-600"
         >
           <FaFileAlt />
-          CareerLaunch
+          ResumeCraft
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <NavLink
               key={link.path}
@@ -47,7 +50,7 @@ function Navbar() {
 
           <Link
             to="/builder"
-            className="rounded-lg bg-blue-600 px-5 py-2 text-white font-semibold hover:bg-blue-700 transition"
+            className="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white transition hover:bg-blue-700"
           >
             Create Resume
           </Link>
@@ -55,16 +58,23 @@ function Navbar() {
 
         {/* Mobile Button */}
         <button
-          className="md:hidden text-3xl"
+          type="button"
+          aria-label="Toggle menu"
+          className="text-3xl md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? <HiOutlineX /> : <HiOutlineMenu />}
+          {menuOpen ? (
+            <HiOutlineX />
+          ) : (
+            <HiOutlineMenu />
+          )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden border-t bg-white">
+        <div className="border-t bg-white md:hidden">
+
           {navLinks.map((link) => (
             <NavLink
               key={link.path}
@@ -86,11 +96,12 @@ function Navbar() {
             <Link
               to="/builder"
               onClick={() => setMenuOpen(false)}
-              className="block rounded-lg bg-blue-600 py-3 text-center text-white font-semibold"
+              className="block rounded-lg bg-blue-600 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
             >
               Create Resume
             </Link>
           </div>
+
         </div>
       )}
     </nav>
@@ -98,3 +109,4 @@ function Navbar() {
 }
 
 export default Navbar;
+

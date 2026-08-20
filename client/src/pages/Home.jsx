@@ -13,7 +13,6 @@ function Home() {
       <Hero />
       <Features />
       <Stats />
-      <TemplatesPreview />
       <HowItWorks />
       <Testimonials />
       <FAQ />
