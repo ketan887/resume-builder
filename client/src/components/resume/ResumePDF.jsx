@@ -1,9 +1,11 @@
+
 import {
   Document,
   Page,
   Text,
   View,
   StyleSheet,
+  Link,
 } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
@@ -33,6 +35,19 @@ const styles = StyleSheet.create({
     fontSize: 8.5,
     color: "#374151",
     marginBottom: 2,
+  },
+
+  contactLinks: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 2,
+  },
+
+  contactLink: {
+    fontSize: 8.5,
+    color: "#2563eb",
+    textDecoration: "none",
+    marginRight: 10,
   },
 
   section: {
@@ -82,6 +97,20 @@ const styles = StyleSheet.create({
   skills: {
     fontSize: 9,
     lineHeight: 1.4,
+  },
+
+  projectLinksContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 2,
+    marginBottom: 2,
+  },
+
+  projectLink: {
+    fontSize: 8.5,
+    color: "#2563eb",
+    textDecoration: "underline",
+    marginRight: 10,
   },
 });
 
@@ -133,11 +162,30 @@ function ResumePDF({ resumeData }) {
   const skills =
     resumeData?.skills?.filter(Boolean) || [];
 
+  // Make sure URLs have a protocol
+  const normalizeUrl = (url) => {
+    if (!url) return "";
+
+    const trimmedUrl = String(url).trim();
+
+    if (
+      trimmedUrl.startsWith("http://") ||
+      trimmedUrl.startsWith("https://") ||
+      trimmedUrl.startsWith("mailto:")
+    ) {
+      return trimmedUrl;
+    }
+
+    return `https://${trimmedUrl}`;
+  };
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
 
-        {/* HEADER */}
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <Text style={styles.name}>
           {personal.fullName || "Your Name"}
@@ -149,6 +197,8 @@ function ResumePDF({ resumeData }) {
           </Text>
         )}
 
+        {/* Contact Information */}
+
         <Text style={styles.contact}>
           {[
             personal.email,
@@ -159,20 +209,60 @@ function ResumePDF({ resumeData }) {
             .join(" | ")}
         </Text>
 
-        <Text style={styles.contact}>
-          {[
-            personal.linkedin,
-            personal.github,
-            personal.portfolio,
-          ]
-            .filter(Boolean)
-            .join(" | ")}
-        </Text>
+        {/* Clickable Personal Links */}
 
-        {/* SUMMARY */}
+        {(personal.linkedin ||
+          personal.github ||
+          personal.portfolio ||
+          personal.email) && (
+          <View style={styles.contactLinks}>
+
+            {personal.email && (
+              <Link
+                src={`mailto:${personal.email}`}
+                style={styles.contactLink}
+              >
+                <Text>Email</Text>
+              </Link>
+            )}
+
+            {personal.linkedin && (
+              <Link
+                src={normalizeUrl(personal.linkedin)}
+                style={styles.contactLink}
+              >
+                <Text>LinkedIn</Text>
+              </Link>
+            )}
+
+            {personal.github && (
+              <Link
+                src={normalizeUrl(personal.github)}
+                style={styles.contactLink}
+              >
+                <Text>GitHub</Text>
+              </Link>
+            )}
+
+            {personal.portfolio && (
+              <Link
+                src={normalizeUrl(personal.portfolio)}
+                style={styles.contactLink}
+              >
+                <Text>Portfolio</Text>
+              </Link>
+            )}
+
+          </View>
+        )}
+
+        {/* =====================================================
+            PROFESSIONAL SUMMARY
+        ===================================================== */}
 
         {personal.summary && (
           <View style={styles.section}>
+
             <SectionHeading>
               Professional Summary
             </SectionHeading>
@@ -180,13 +270,17 @@ function ResumePDF({ resumeData }) {
             <Text style={styles.text}>
               {personal.summary}
             </Text>
+
           </View>
         )}
 
-        {/* EXPERIENCE */}
+        {/* =====================================================
+            EXPERIENCE
+        ===================================================== */}
 
         {experience.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Experience
             </SectionHeading>
@@ -196,8 +290,10 @@ function ResumePDF({ resumeData }) {
                 key={item.id}
                 style={styles.item}
               >
+
                 <Text style={styles.itemTitle}>
                   {item.position}
+
                   {item.company
                     ? ` — ${item.company}`
                     : ""}
@@ -206,11 +302,13 @@ function ResumePDF({ resumeData }) {
                 {(item.location ||
                   item.startDate ||
                   item.endDate) && (
+
                   <Text style={styles.itemSubtitle}>
                     {[
                       item.location,
+
                       item.startDate &&
-                        item.endDate
+                      item.endDate
                         ? `${item.startDate} - ${item.endDate}`
                         : item.startDate ||
                           item.endDate,
@@ -225,15 +323,20 @@ function ResumePDF({ resumeData }) {
                     {item.description}
                   </Text>
                 )}
+
               </View>
             ))}
+
           </View>
         )}
 
-        {/* PROJECTS */}
+        {/* =====================================================
+            PROJECTS
+        ===================================================== */}
 
         {projects.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Projects
             </SectionHeading>
@@ -243,9 +346,14 @@ function ResumePDF({ resumeData }) {
                 key={item.id}
                 style={styles.item}
               >
+
+                {/* Project Title */}
+
                 <Text style={styles.itemTitle}>
                   {item.title}
                 </Text>
+
+                {/* Technology Stack */}
 
                 {item.techStack && (
                   <Text style={styles.itemSubtitle}>
@@ -253,20 +361,63 @@ function ResumePDF({ resumeData }) {
                   </Text>
                 )}
 
+                {/* Clickable Project Links */}
+
+                {(item.github ||
+                  item.liveDemo) && (
+
+                  <View
+                    style={
+                      styles.projectLinksContainer
+                    }
+                  >
+
+                    {item.github && (
+                      <Link
+                        src={normalizeUrl(item.github)}
+                        style={styles.projectLink}
+                      >
+                        <Text>
+                          GitHub
+                        </Text>
+                      </Link>
+                    )}
+
+                    {item.liveDemo && (
+                      <Link
+                        src={normalizeUrl(item.liveDemo)}
+                        style={styles.projectLink}
+                      >
+                        <Text>
+                          Live Demo
+                        </Text>
+                      </Link>
+                    )}
+
+                  </View>
+                )}
+
+                {/* Project Description */}
+
                 {item.description && (
                   <Text style={styles.description}>
                     {item.description}
                   </Text>
                 )}
+
               </View>
             ))}
+
           </View>
         )}
 
-        {/* EDUCATION */}
+        {/* =====================================================
+            EDUCATION
+        ===================================================== */}
 
         {education.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Education
             </SectionHeading>
@@ -276,6 +427,7 @@ function ResumePDF({ resumeData }) {
                 key={item.id}
                 style={styles.item}
               >
+
                 <Text style={styles.itemTitle}>
                   {item.degree}
                 </Text>
@@ -284,8 +436,9 @@ function ResumePDF({ resumeData }) {
                   {[
                     item.institution,
                     item.location,
+
                     item.startYear &&
-                      item.endYear
+                    item.endYear
                       ? `${item.startYear} - ${item.endYear}`
                       : item.startYear ||
                         item.endYear,
@@ -293,15 +446,20 @@ function ResumePDF({ resumeData }) {
                     .filter(Boolean)
                     .join(" | ")}
                 </Text>
+
               </View>
             ))}
+
           </View>
         )}
 
-        {/* SKILLS */}
+        {/* =====================================================
+            SKILLS
+        ===================================================== */}
 
         {skills.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Skills
             </SectionHeading>
@@ -309,13 +467,17 @@ function ResumePDF({ resumeData }) {
             <Text style={styles.skills}>
               {skills.join(" • ")}
             </Text>
+
           </View>
         )}
 
-        {/* CERTIFICATES */}
+        {/* =====================================================
+            CERTIFICATIONS
+        ===================================================== */}
 
         {certificates.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Certifications
             </SectionHeading>
@@ -325,6 +487,7 @@ function ResumePDF({ resumeData }) {
                 key={item.id}
                 style={styles.item}
               >
+
                 <Text style={styles.itemTitle}>
                   {item.name}
                 </Text>
@@ -337,15 +500,33 @@ function ResumePDF({ resumeData }) {
                     .filter(Boolean)
                     .join(" | ")}
                 </Text>
+
+                {item.credentialUrl && (
+                  <Link
+                    src={normalizeUrl(
+                      item.credentialUrl
+                    )}
+                    style={styles.projectLink}
+                  >
+                    <Text>
+                      Credential
+                    </Text>
+                  </Link>
+                )}
+
               </View>
             ))}
+
           </View>
         )}
 
-        {/* ACHIEVEMENTS */}
+        {/* =====================================================
+            ACHIEVEMENTS
+        ===================================================== */}
 
         {achievements.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Achievements
             </SectionHeading>
@@ -355,12 +536,14 @@ function ResumePDF({ resumeData }) {
                 key={item.id}
                 style={styles.item}
               >
+
                 <Text style={styles.itemTitle}>
                   {item.title}
                 </Text>
 
                 {(item.description ||
                   item.year) && (
+
                   <Text style={styles.description}>
                     {[
                       item.description,
@@ -370,15 +553,20 @@ function ResumePDF({ resumeData }) {
                       .join(" | ")}
                   </Text>
                 )}
+
               </View>
             ))}
+
           </View>
         )}
 
-        {/* LANGUAGES */}
+        {/* =====================================================
+            LANGUAGES
+        ===================================================== */}
 
         {languages.length > 0 && (
           <View style={styles.section}>
+
             <SectionHeading>
               Languages
             </SectionHeading>
@@ -393,6 +581,7 @@ function ResumePDF({ resumeData }) {
                 )
                 .join(" • ")}
             </Text>
+
           </View>
         )}
 
@@ -402,3 +591,4 @@ function ResumePDF({ resumeData }) {
 }
 
 export default ResumePDF;
+
